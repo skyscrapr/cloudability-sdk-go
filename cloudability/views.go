@@ -1,5 +1,9 @@
 package cloudability
 
+import (
+	"strconv"
+)
+
 
 type viewsEndpoint struct {
 	*cloudabilityV3Endpoint
@@ -32,8 +36,8 @@ func (e viewsEndpoint) Views() ([]View, error) {
 	return views, err
 }
 
-func (e viewsEndpoint) View() (View, error) {
+func (e viewsEndpoint) View(id int) (*View, error) {
 	var view View
-	err := e.get("", &view)
-	return view, err
+	err := e.get(strconv.Itoa(id), &view)
+	return &view, err
 }

@@ -18,12 +18,12 @@ const (
 	api_v3_url = "https://api.cloudability.com"
 )
 
-// Client is a Cloudability http client
+// Cloudability http client
 type CloudabilityClient struct {
 	BusinessMappings *businessMappingsEndpoint
 	Users *usersEndpoint
 	Vendors *vendorsEndpoint
-	// Views *ViewsEndpoint
+	Views *viewsEndpoint
 }
 
 func NewCloudabilityClient(apikey string) *CloudabilityClient {
