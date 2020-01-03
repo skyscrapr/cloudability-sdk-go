@@ -19,15 +19,15 @@ const (
 )
 
 // Client is a Cloudability http client
-type cloudabilityClient struct {
+type CloudabilityClient struct {
 	BusinessMappings *businessMappingsEndpoint
 	Users *usersEndpoint
 	Vendors *vendorsEndpoint
 	// Views *ViewsEndpoint
 }
 
-func NewCloudabilityClient(apikey string) *cloudabilityClient {
-	c := &cloudabilityClient{}
+func NewCloudabilityClient(apikey string) *CloudabilityClient {
+	c := &CloudabilityClient{}
 	c.BusinessMappings = newBusinessMappingsEndpoint(apikey)
 	c.Users = newUsersEndpoint(apikey)
 	c.Vendors = newVendorsEndpoint(apikey)
