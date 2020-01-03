@@ -22,7 +22,7 @@ const (
 type cloudabilityClient struct {
 	BusinessMappings *businessMappingsEndpoint
 	Users *usersEndpoint
-	// Vendors *VendorsEndpoint
+	Vendors *vendorsEndpoint
 	// Views *ViewsEndpoint
 }
 
@@ -30,6 +30,7 @@ func NewCloudabilityClient(apikey string) *cloudabilityClient {
 	c := &cloudabilityClient{}
 	c.BusinessMappings = newBusinessMappingsEndpoint(apikey)
 	c.Users = newUsersEndpoint(apikey)
+	c.Vendors = newVendorsEndpoint(apikey)
 	return c
 }
 
