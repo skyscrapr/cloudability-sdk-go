@@ -28,22 +28,14 @@ type BusinessMapping struct {
 	UpdatedAt string
 }
 
-type businessMappingsResult struct {
-	Result []BusinessMapping `json:"result"`
+func (e *businessMappingsEndpoint) BusinessMappings() ([]BusinessMapping, error) {
+	var businessMappings []BusinessMapping
+	err := e.get("", &businessMappings)
+	return businessMappings, err
 }
 
-func (e businessMappingsEndpoint) BusinessMappings() ([]BusinessMapping, error) {
-	var result businessMappingsResult
-	err := e.get("", &result)
-	return result.Result, err
-}
-
-type businessMappingResult struct {
-	Result BusinessMapping `json:"result"`
-}
-
-func (e businessMappingsEndpoint) BusinessMapping(index int) (*BusinessMapping, error) {
-	var result businessMappingResult
-	err := e.get(strconv.Itoa(index), &result)
-	return &result.Result, err
+func (e *businessMappingsEndpoint) BusinessMapping(index int) (*BusinessMapping, error) {
+	var businessMapping BusinessMapping
+	err := e.get(strconv.Itoa(index), &businessMapping)
+	return &businessMapping, err
 }
