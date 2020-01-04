@@ -1,5 +1,10 @@
 package cloudability
 
+import (
+	"fmt"
+	"strconv"
+)
+
 
 type vendorsEndpoint struct {
 	*cloudabilityV3Endpoint
@@ -46,14 +51,14 @@ func (e vendorsEndpoint) Vendors() ([]Vendor, error) {
 	return vendors, err
 }
 
-func (e vendorsEndpoint) Credentials() ([]Credential, error) {
+func (e vendorsEndpoint) Credentials(vendor string) ([]Credential, error) {
 	var credentials []Credential
-	err := e.get("", &credentials)
+	err := e.get(fmt.Sprintf("%s/accounts/", vendor), &credentials)
 	return credentials, err
 }
 
-func (e vendorsEndpoint) Credential() (Credential, error) {
+func (e vendorsEndpoint) Credential(vendor string, id int) (*Credential, error) {
 	var credential Credential
-	err := e.get("", &credential)
-	return credential, err
+	err := e.get(fmt.Sprintf("%s/accounts/%s", vendor, strconv.Itoa(id)), &credential)
+	return &credential, err
 }
