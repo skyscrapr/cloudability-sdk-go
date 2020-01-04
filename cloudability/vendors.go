@@ -63,17 +63,6 @@ func (e vendorsEndpoint) GetCredential(vendor string, id int) (*Credential, erro
 	return &credential, err
 }
 
-func (e vendorsEndpoint) NewLinkedAccountCredential(vendor string, accountId string, parentAccountId string) (*Credential, error) {
-	// Recipe
-	// - Run verification on the master payer account (to ensure the account is in the list) ? Does this block?
-	// - Create the credential for the linked account
-	// - Get the credential with the authorization and return it
-	e.VerifyAccountCredentials(vendor, parentAccountId)
-	credntial, err := e.NewCredential(vendor, accountId, "aws_role")
-	// probably need to loop until credential authorization is populated. I doubt it's done immediately
-	return credntial, err
-}
-
 func (e vendorsEndpoint) VerifyAccountCredentials(vendor string, accountId string) error {
 	err := e.post(fmt.Sprintf("%s/accounts/%s/verification", vendor, accountId), nil)
 	return err
