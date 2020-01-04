@@ -45,20 +45,47 @@ type Credential struct {
 	CreatedAt string `json:"createdAt"`
 }
 
-func (e vendorsEndpoint) Vendors() ([]Vendor, error) {
+func (e vendorsEndpoint) GetVendors() ([]Vendor, error) {
 	var vendors []Vendor
 	err := e.get("", &vendors)
 	return vendors, err
 }
 
-func (e vendorsEndpoint) Credentials(vendor string) ([]Credential, error) {
+func (e vendorsEndpoint) GetCredentials(vendor string) ([]Credential, error) {
 	var credentials []Credential
 	err := e.get(fmt.Sprintf("%s/accounts/", vendor), &credentials)
 	return credentials, err
 }
 
-func (e vendorsEndpoint) Credential(vendor string, id int) (*Credential, error) {
+func (e vendorsEndpoint) GetCredential(vendor string, id int) (*Credential, error) {
 	var credential Credential
 	err := e.get(fmt.Sprintf("%s/accounts/%s", vendor, strconv.Itoa(id)), &credential)
 	return &credential, err
+}
+
+func (e vendorsEndpoint) NewLinkedAccountCredential(vendor string, accountId string, parentAccountId string) (*Credential, error) {
+	// Recipe
+	// - Run verification on the master payer account (to ensure the account is in the list) ? Does this block?
+	// - Create the credential for the linked account
+	// - Get the credential with the authorization and return it
+	e.VerifyAccountCredentials(vendor, parentAccountId)
+	credntial, err := e.NewCredential(vendor, accountId, "aws_role")
+	// probably need to loop until credential authorization is populated. I doubt it's done immediately
+	return credntial, err
+}
+
+func (e vendorsEndpoint) VerifyAccountCredentials(vendor string, accountId string) error {
+	err := e.post(fmt.Sprintf("%s/accounts/%s/verification", vendor, accountId), nil)
+	return err
+}
+
+func (e vendorsEndpoint) NewCredential(vendor string, accountId string, credentialType string) (*Credential, error) {
+	var credential Credential
+	err := e.post(fmt.Sprintf("%s/accounts", vendor), &credential)
+	return &credential, err
+}
+
+func (e vendorsEndpoint) DeleteCredential(vendor string, id string) error {
+	err := e.delete(fmt.Sprintf("%s/accounts/%s", vendor, id))
+	return err
 }

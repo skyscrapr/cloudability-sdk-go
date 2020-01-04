@@ -30,13 +30,13 @@ type View struct {
 	Filters []ViewFilter `json:"filters"`
 }
 
-func (e viewsEndpoint) Views() ([]View, error) {
+func (e viewsEndpoint) GetViews() ([]View, error) {
 	var views []View
 	err := e.get("", &views)
 	return views, err
 }
 
-func (e viewsEndpoint) View(id int) (*View, error) {
+func (e viewsEndpoint) GetView(id int) (*View, error) {
 	var view View
 	err := e.get(strconv.Itoa(id), &view)
 	return &view, err

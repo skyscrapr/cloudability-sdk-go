@@ -31,6 +31,7 @@ func NewCloudabilityClient(apikey string) *CloudabilityClient {
 	c.BusinessMappings = newBusinessMappingsEndpoint(apikey)
 	c.Users = newUsersEndpoint(apikey)
 	c.Vendors = newVendorsEndpoint(apikey)
+	c.Views = newViewsEndpoint(apikey)
 	return c
 }
 
@@ -77,7 +78,26 @@ func (e *cloudabilityV3Endpoint) get(endpoint string, result interface{}) error 
 	}
 	_, err = e.execRequest(req, &resultTemplate)
 	return err
-	
+}
+
+func (e *cloudabilityV3Endpoint) post(endpoint string, result interface{}) error {
+	endpointPath := path.Join(e.EndpointPath, endpoint)
+	req, err := e.newVRequest("POST", endpointPath, nil)
+	if err != nil {
+		return err
+	}
+	_, err = e.execRequest(req, result)
+	return err
+}
+
+func (e *cloudabilityV3Endpoint) delete(endpoint string) error {
+	endpointPath := path.Join(e.EndpointPath, endpoint)
+	req, err := e.newVRequest("DELETE", endpointPath, nil)
+	if err != nil {
+		return err
+	}
+	_, err = e.execRequest(req, nil)
+	return err
 }
 
 func (e *cloudabilityV3Endpoint) execRequest(req *http.Request, v interface{}) (*http.Response, error) {
@@ -93,9 +113,11 @@ func (e *cloudabilityV3Endpoint) execRequest(req *http.Request, v interface{}) (
 		}
 		log.Print(string(bodyBytes))
 	}
-	err = json.NewDecoder(resp.Body).Decode(v)
-	if err != nil {
-		log.Fatal(err)
+	if v != nil {
+		err = json.NewDecoder(resp.Body).Decode(v)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	return resp, nil
 }

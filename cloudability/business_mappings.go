@@ -28,13 +28,13 @@ type BusinessMapping struct {
 	UpdatedAt string
 }
 
-func (e *businessMappingsEndpoint) BusinessMappings() ([]BusinessMapping, error) {
+func (e *businessMappingsEndpoint) GetBusinessMappings() ([]BusinessMapping, error) {
 	var businessMappings []BusinessMapping
 	err := e.get("", &businessMappings)
 	return businessMappings, err
 }
 
-func (e *businessMappingsEndpoint) BusinessMapping(index int) (*BusinessMapping, error) {
+func (e *businessMappingsEndpoint) GetBusinessMapping(index int) (*BusinessMapping, error) {
 	var businessMapping BusinessMapping
 	err := e.get(strconv.Itoa(index), &businessMapping)
 	return &businessMapping, err

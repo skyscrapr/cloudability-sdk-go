@@ -24,13 +24,13 @@ type User struct {
 	DefaultDimensionFilterId int `json:"default_dimension_filer_set_id"`
 }
 
-func (e usersEndpoint) Users() ([]User, error) {
+func (e usersEndpoint) GetUsers() ([]User, error) {
 	var users []User
 	err := e.get("", &users)
 	return users, err
 }
 
-func (e usersEndpoint) User(index int) (*User, error) {
+func (e usersEndpoint) GetUser(index int) (*User, error) {
 	var user User
 	err := e.get(strconv.Itoa(index), &user)
 	return &user, err
