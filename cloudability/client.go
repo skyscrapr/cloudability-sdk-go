@@ -35,7 +35,7 @@ func NewCloudabilityClient(apikey string) *CloudabilityClient {
 	return c
 }
 
-type cloudabilityV3Endpoint struct {
+type cloudabilityEndpoint struct {
 	*http.Client
 	BaseURL *url.URL
 	EndpointPath string
@@ -43,46 +43,54 @@ type cloudabilityV3Endpoint struct {
 	apikey string
 }
 
+type cloudabilityV3Endpoint struct {
+	*cloudabilityEndpoint
+}
+
 type cloudabilityV1Endpoint struct {
-	*cloudabilityV3Endpoint
-}
-
-func newCloudabilityV3Endpoint(apikey string) *cloudabilityV3Endpoint {
-	e := &cloudabilityV3Endpoint{
-		Client: &http.Client{Timeout: 10 * time.Second},
-		UserAgent: "cloudability-sdk-go",
-		apikey: apikey,
-	}
-	e.BaseURL, _ = url.Parse(api_v3_url)
-	return e
-}
-
-func newCloudabilityV1Endpoint(apikey string) *cloudabilityV1Endpoint {
-	e := &cloudabilityV1Endpoint{newCloudabilityV3Endpoint(apikey)}
-	e.BaseURL, _ = url.Parse(api_v1_url)
-	return e
+	*cloudabilityEndpoint
 }
 
 type resultTemplate struct {
 	Result interface{} `json:"result"`
 }
 
-func (e *cloudabilityV3Endpoint) get(endpoint string, result interface{}) error {
-	endpointPath := path.Join(e.EndpointPath, endpoint)
-	req, err := e.newVRequest("GET", endpointPath, nil)
-	if err != nil {
-		return err
+func newCloudabilityEndpoint(apikey string) *cloudabilityEndpoint {
+	e := &cloudabilityEndpoint{
+		Client: &http.Client{Timeout: 10 * time.Second},
+		UserAgent: "cloudability-sdk-go",
+		apikey: apikey,
 	}
-	resultTemplate := &resultTemplate{
-		Result: &result,
-	}
-	_, err = e.execRequest(req, &resultTemplate)
-	return err
+	return e
 }
 
-func (e *cloudabilityV3Endpoint) post(endpoint string, result interface{}) error {
+func newCloudabilityV3Endpoint(apikey string) *cloudabilityV3Endpoint {
+	e := &cloudabilityV3Endpoint{newCloudabilityEndpoint(apikey)}
+	e.BaseURL, _ = url.Parse(api_v3_url)
+	return e
+}
+
+func newCloudabilityV1Endpoint(apikey string) *cloudabilityV1Endpoint {
+	e := &cloudabilityV1Endpoint{newCloudabilityEndpoint(apikey)}
+	e.BaseURL, _ = url.Parse(api_v1_url)
+	return e
+}
+
+func (e *cloudabilityEndpoint) get(endpoint string, result interface{}) error {
+	return e.exec("GET", endpoint, nil, result)
+}
+
+func (e *cloudabilityEndpoint) post(endpoint string, body interface{}, result interface{}) error {
+	return e.exec("POST", endpoint, body, result)
+}
+
+func (e *cloudabilityEndpoint) delete(endpoint string) error {
+	return e.exec("DELETE", endpoint, nil, nil)
+}
+
+func (e *cloudabilityEndpoint) exec(method string, endpoint string, body interface{}, result interface{}) error {
 	endpointPath := path.Join(e.EndpointPath, endpoint)
-	req, err := e.newVRequest("POST", endpointPath, nil)
+	req, err := e.newRequest(method, endpointPath, body)
 	if err != nil {
 		return err
 	}
@@ -90,17 +98,7 @@ func (e *cloudabilityV3Endpoint) post(endpoint string, result interface{}) error
 	return err
 }
 
-func (e *cloudabilityV3Endpoint) delete(endpoint string) error {
-	endpointPath := path.Join(e.EndpointPath, endpoint)
-	req, err := e.newVRequest("DELETE", endpointPath, nil)
-	if err != nil {
-		return err
-	}
-	_, err = e.execRequest(req, nil)
-	return err
-}
-
-func (e *cloudabilityV3Endpoint) execRequest(req *http.Request, v interface{}) (*http.Response, error) {
+func (e *cloudabilityEndpoint) execRequest(req *http.Request, result interface{}) (*http.Response, error) {
 	resp, err := e.Do(req)
 	if err != nil {
 		return nil, err
@@ -113,8 +111,11 @@ func (e *cloudabilityV3Endpoint) execRequest(req *http.Request, v interface{}) (
 		}
 		log.Print(string(bodyBytes))
 	}
-	if v != nil {
-		err = json.NewDecoder(resp.Body).Decode(v)
+	if result != nil {
+		resultTemplate := &resultTemplate{
+			Result: &result,
+		}
+		err = json.NewDecoder(resp.Body).Decode(resultTemplate)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -122,7 +123,7 @@ func (e *cloudabilityV3Endpoint) execRequest(req *http.Request, v interface{}) (
 	return resp, nil
 }
 
-func (e *cloudabilityV3Endpoint) newRequest(method string, path string, body interface{}) (*http.Request, error) {
+func (e *cloudabilityEndpoint) newRequest(method string, path string, body interface{}) (*http.Request, error) {
 	rel := &url.URL{Path: path}
 	u := e.BaseURL.ResolveReference(rel)
 	var buf io.ReadWriter
@@ -145,16 +146,16 @@ func (e *cloudabilityV3Endpoint) newRequest(method string, path string, body int
 	return req, nil
 }
 
-func (e *cloudabilityV1Endpoint) newVRequest(method string, path string, body interface{}) (*http.Request, error) {
-	req, err := e.newRequest(method, path,body)
-	q := req.URL.Query()
-	q.Add("auth_token", e.apikey)
-	req.URL.RawQuery = q.Encode()
+func (e *cloudabilityV3Endpoint) newRequest(method string, path string, body interface{}) (*http.Request, error) {
+	req, err := e.cloudabilityEndpoint.newRequest(method, path, body)
+	req.SetBasicAuth(e.apikey, "")
 	return req, err
 }
 
-func (e *cloudabilityV3Endpoint) newVRequest(method string, path string, body interface{}) (*http.Request, error) {
-	req, err := e.newRequest(method, path, body)
-	req.SetBasicAuth(e.apikey, "")
+func (e *cloudabilityV1Endpoint) newRequest(method string, path string, body interface{}) (*http.Request, error) {
+	req, err := e.cloudabilityEndpoint.newRequest(method, path, body)
+	q := req.URL.Query()
+	q.Add("auth_token", e.apikey)
+	req.URL.RawQuery = q.Encode()
 	return req, err
 }

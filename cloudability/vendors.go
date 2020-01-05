@@ -63,14 +63,18 @@ func (e vendorsEndpoint) GetCredential(vendor string, id int) (*Credential, erro
 	return &credential, err
 }
 
-func (e vendorsEndpoint) VerifyAccountCredentials(vendor string, accountId string) error {
-	err := e.post(fmt.Sprintf("%s/accounts/%s/verification", vendor, accountId), nil)
+func (e vendorsEndpoint) VerifyCredential(vendor string, accountId string) error {
+	err := e.post(fmt.Sprintf("%s/accounts/%s/verification", vendor, accountId), nil, nil)
 	return err
 }
 
-func (e vendorsEndpoint) NewCredential(vendor string, accountId string, credentialType string) (*Credential, error) {
+func (e vendorsEndpoint) NewCredential(vendorKey string, accountId string, credType string) (*Credential, error) {
 	var credential Credential
-	err := e.post(fmt.Sprintf("%s/accounts", vendor), &credential)
+	body := map[string]string{
+		"vendorAccountId": accountId,
+		"type": credType,
+	}
+	err := e.post(fmt.Sprintf("%s/accounts", vendorKey), body, &credential)
 	return &credential, err
 }
 
