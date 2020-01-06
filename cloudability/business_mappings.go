@@ -42,6 +42,12 @@ func (e *businessMappingsEndpoint) GetBusinessMapping(index int) (*BusinessMappi
 
 func (e *businessMappingsEndpoint) NewBusinessMapping(businessMapping *BusinessMapping) (*BusinessMapping, error) {
 	var newBusinessMapping BusinessMapping
-	err := e.post(strconv.Itoa(businessMapping.Index), businessMapping, &newBusinessMapping)
+	err := e.post("", businessMapping, &newBusinessMapping)
 	return &newBusinessMapping, err
 }
+
+// func (e *businessMappingsEndpoint) UpdateBusinessMapping(businessMapping *BusinessMapping) (*BusinessMapping, error) {
+// 	var newBusinessMapping BusinessMapping
+// 	err := e.update(strconv.Itoa(businessMapping.Index), businessMapping, &newBusinessMapping)
+// 	return &newBusinessMapping, err
+// }

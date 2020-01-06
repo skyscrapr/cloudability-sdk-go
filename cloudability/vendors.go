@@ -68,11 +68,16 @@ func (e vendorsEndpoint) VerifyCredential(vendor string, accountId string) error
 	return err
 }
 
+type newCredentialParams struct {
+	VendorAccountId string `json:"vendorAccountId"`
+	Type string `json:"type"`
+}
+
 func (e vendorsEndpoint) NewCredential(vendorKey string, accountId string, credType string) (*Credential, error) {
 	var credential Credential
-	body := map[string]string{
-		"vendorAccountId": accountId,
-		"type": credType,
+	body := &newCredentialParams{
+		VendorAccountId: accountId,
+		Type: credType,
 	}
 	err := e.post(fmt.Sprintf("%s/accounts", vendorKey), body, &credential)
 	return &credential, err
