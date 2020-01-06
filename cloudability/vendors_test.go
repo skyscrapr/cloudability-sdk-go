@@ -76,3 +76,15 @@ func TestNewCredential(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestDeleteCredential(t *testing.T) {
+	testServer := testRequest(t, "DELETE", "/v3/vendors/aws/accounts/123456789012", nil)
+	defer testServer.Close()
+
+	e := newVendorsEndpoint("testapikey")
+	e.BaseURL, _= url.Parse(testServer.URL)
+	err := e.DeleteCredential("aws", "123456789012")
+	if err != nil{
+		t.Fail()
+	}
+}

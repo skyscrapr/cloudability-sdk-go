@@ -39,8 +39,10 @@ func TestGetBusinessMapping(t *testing.T) {
 
 func TestNewBusinessMapping(t *testing.T) {
 	businessMapping := &BusinessMapping{
-		Name: "TestName",
-		DefaultValue: "TestDefaultValue",
+		Kind: "test-kind",
+		Name: "test-name",
+		DefaultValue: "test-default-value",
+		// Statements: [], 
 	}
 	testServer := testRequest(t, "POST", "/v3/business-mappings", businessMapping)
 	defer testServer.Close()
@@ -48,6 +50,36 @@ func TestNewBusinessMapping(t *testing.T) {
 	e := newBusinessMappingsEndpoint("testapikey")
 	e.BaseURL, _= url.Parse(testServer.URL)
 	_, err := e.NewBusinessMapping(businessMapping)
+	if err != nil{
+		t.Fail()
+	}
+}
+
+func TestUpdateBusinessMapping(t *testing.T) {
+	businessMapping := &BusinessMapping{
+		Index: 1,
+		Kind: "test-kind",
+		Name: "test-name",
+		DefaultValue: "test-default-value",
+		// Statements: [], 
+	}
+	testServer := testRequest(t, "PUT", "/v3/business-mappings/1", businessMapping)
+	defer testServer.Close()
+
+	e := newBusinessMappingsEndpoint("testapikey")
+	e.BaseURL, _= url.Parse(testServer.URL)
+	err := e.UpdateBusinessMapping(businessMapping)
+	if err != nil{
+		t.Fail()
+	}
+}
+
+func TestDeleteBusinessMapping(t *testing.T) {
+	testServer := testRequest(t, "DELETE", "/v3/business-mappings/1", nil)
+	defer testServer.Close()
+	e := newBusinessMappingsEndpoint("testapikey")
+	e.BaseURL, _= url.Parse(testServer.URL)
+	err := e.DeleteBusinessMapping(1)
 	if err != nil{
 		t.Fail()
 	}

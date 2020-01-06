@@ -84,6 +84,10 @@ func (e *cloudabilityEndpoint) post(endpoint string, body interface{}, result in
 	return e.exec("POST", endpoint, body, result)
 }
 
+func (e *cloudabilityEndpoint) put(endpoint string, body interface{}) error {
+	return e.exec("PUT", endpoint, body, nil)
+}
+
 func (e *cloudabilityEndpoint) delete(endpoint string) error {
 	return e.exec("DELETE", endpoint, nil, nil)
 }

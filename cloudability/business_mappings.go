@@ -2,6 +2,7 @@ package cloudability
 
 import (
 	"strconv"
+	"encoding/json"
 )
 
 type businessMappingsEndpoint struct {
@@ -28,6 +29,14 @@ type BusinessMapping struct {
 	UpdatedAt string
 }
 
+type businessMappingPayload struct {
+	Kind string `json:"kind"`
+	Name string `json:"name"`
+	DefaultValue string `json:"defaultValue"`
+	Statements []BusinessMappingStatement `json:"statements"`
+	UpdatedAt string
+}
+
 func (e *businessMappingsEndpoint) GetBusinessMappings() ([]BusinessMapping, error) {
 	var businessMappings []BusinessMapping
 	err := e.get("", &businessMappings)
@@ -41,13 +50,22 @@ func (e *businessMappingsEndpoint) GetBusinessMapping(index int) (*BusinessMappi
 }
 
 func (e *businessMappingsEndpoint) NewBusinessMapping(businessMapping *BusinessMapping) (*BusinessMapping, error) {
+	businessMappingPayload := new(businessMappingPayload)
+	jsonBusinessMapping, _ := json.Marshal(businessMappingPayload)
+	json.Unmarshal(jsonBusinessMapping, businessMappingPayload)
 	var newBusinessMapping BusinessMapping
-	err := e.post("", businessMapping, &newBusinessMapping)
+	err := e.post("", businessMappingPayload, &newBusinessMapping)
 	return &newBusinessMapping, err
 }
 
-// func (e *businessMappingsEndpoint) UpdateBusinessMapping(businessMapping *BusinessMapping) (*BusinessMapping, error) {
-// 	var newBusinessMapping BusinessMapping
-// 	err := e.update(strconv.Itoa(businessMapping.Index), businessMapping, &newBusinessMapping)
-// 	return &newBusinessMapping, err
-// }
+func (e *businessMappingsEndpoint) UpdateBusinessMapping(businessMapping *BusinessMapping) error {
+	businessMappingPayload := new(businessMappingPayload)
+	jsonBusinessMapping, _ := json.Marshal(businessMappingPayload)
+	json.Unmarshal(jsonBusinessMapping, businessMappingPayload)
+	return e.put(strconv.Itoa(businessMapping.Index), businessMappingPayload)
+}
+
+func (e *businessMappingsEndpoint) DeleteBusinessMapping(index int) error {
+	err := e.delete(strconv.Itoa(index))
+	return err
+}
