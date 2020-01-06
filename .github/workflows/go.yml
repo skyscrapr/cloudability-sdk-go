@@ -24,6 +24,10 @@ jobs:
             dep ensure
         fi
 
-    - name: Build
+    - name: Test
       working-directory: ./cloudability
-      run: go build -v .
+      run: go test ./...
+
+    # - name: Build
+    #   working-directory: ./cloudability
+    #   run: go build -v .
