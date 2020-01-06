@@ -25,4 +25,5 @@ jobs:
         fi
 
     - name: Build
-      run: cloudability/go build -v .
+      working-directory: ./cloudability
+      run: go build -v .
