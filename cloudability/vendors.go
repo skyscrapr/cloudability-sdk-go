@@ -34,7 +34,7 @@ type Authorization struct {
 	ExternalId string `json:"externalId"`
 }
 
-type Credential struct {
+type Account struct {
 	Id string `json:"id"`
 	VendorAccountName string `json:"vendorAccountName"`
 	VendorAccountId string `json:"vendorAccountId"`
@@ -51,19 +51,19 @@ func (e vendorsEndpoint) GetVendors() ([]Vendor, error) {
 	return vendors, err
 }
 
-func (e vendorsEndpoint) GetCredentials(vendor string) ([]Credential, error) {
-	var credentials []Credential
-	err := e.get(fmt.Sprintf("%s/accounts/", vendor), &credentials)
-	return credentials, err
+func (e vendorsEndpoint) GetAccounts(vendor string) ([]Account, error) {
+	var accounts []Account
+	err := e.get(fmt.Sprintf("%s/accounts/", vendor), &accounts)
+	return accounts, err
 }
 
-func (e vendorsEndpoint) GetCredential(vendor string, id int) (*Credential, error) {
-	var credential Credential
-	err := e.get(fmt.Sprintf("%s/accounts/%s", vendor, strconv.Itoa(id)), &credential)
-	return &credential, err
+func (e vendorsEndpoint) GetAccount(vendor string, id int) (*Account, error) {
+	var account Account
+	err := e.get(fmt.Sprintf("%s/accounts/%s", vendor, strconv.Itoa(id)), &account)
+	return &account, err
 }
 
-func (e vendorsEndpoint) VerifyCredential(vendor string, accountId string) error {
+func (e vendorsEndpoint) VerifyAccount(vendor string, accountId string) error {
 	err := e.post(fmt.Sprintf("%s/accounts/%s/verification", vendor, accountId), nil, nil)
 	return err
 }
@@ -73,17 +73,17 @@ type newCredentialParams struct {
 	Type string `json:"type"`
 }
 
-func (e vendorsEndpoint) NewCredential(vendorKey string, accountId string, credType string) (*Credential, error) {
-	var credential Credential
+func (e vendorsEndpoint) NewAccount(vendorKey string, accountId string, credType string) (*Account, error) {
+	var account Account
 	body := &newCredentialParams{
 		VendorAccountId: accountId,
 		Type: credType,
 	}
-	err := e.post(fmt.Sprintf("%s/accounts", vendorKey), body, &credential)
-	return &credential, err
+	err := e.post(fmt.Sprintf("%s/accounts", vendorKey), body, &account)
+	return &account, err
 }
 
-func (e vendorsEndpoint) DeleteCredential(vendor string, id string) error {
+func (e vendorsEndpoint) DeleteAccount(vendor string, id string) error {
 	err := e.delete(fmt.Sprintf("%s/accounts/%s", vendor, id))
 	return err
 }

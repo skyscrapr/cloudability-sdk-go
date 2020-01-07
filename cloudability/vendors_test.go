@@ -31,7 +31,7 @@ func TestGetCredentials(t *testing.T) {
 
 	e := newVendorsEndpoint("testapikey")
 	e.BaseURL, _= url.Parse(testServer.URL)
-	_, err := e.GetCredentials("aws")
+	_, err := e.GetAccounts("aws")
 	if err != nil{
 		t.Fail()
 	}
@@ -43,7 +43,7 @@ func TestGetCredential(t *testing.T) {
 
 	e := newVendorsEndpoint("testapikey")
 	e.BaseURL, _= url.Parse(testServer.URL)
-	_, err := e.GetCredential("aws", 123456789012)
+	_, err := e.GetAccount("aws", 123456789012)
 	if err != nil{
 		t.Fail()
 	}
@@ -55,7 +55,7 @@ func TestVerifyCredential(t *testing.T) {
 
 	e := newVendorsEndpoint("testapikey")
 	e.BaseURL, _= url.Parse(testServer.URL)
-	err := e.VerifyCredential("aws", "123456789012")
+	err := e.VerifyAccount("aws", "123456789012")
 	if err != nil{
 		t.Fail()
 	}
@@ -71,7 +71,7 @@ func TestNewCredential(t *testing.T) {
 
 	e := newVendorsEndpoint("testapikey")
 	e.BaseURL, _= url.Parse(testServer.URL)
-	_, err := e.NewCredential("aws", "123456789012", "aws_role")
+	_, err := e.NewAccount("aws", "123456789012", "aws_role")
 	if err != nil{
 		t.Fail()
 	}
@@ -83,7 +83,7 @@ func TestDeleteCredential(t *testing.T) {
 
 	e := newVendorsEndpoint("testapikey")
 	e.BaseURL, _= url.Parse(testServer.URL)
-	err := e.DeleteCredential("aws", "123456789012")
+	err := e.DeleteAccount("aws", "123456789012")
 	if err != nil{
 		t.Fail()
 	}
