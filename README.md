@@ -1,6 +1,6 @@
 # Cloudability SDK for Go
 
-![](https://github.com/skyscrapr/cloudability-sdk-go/workflows/Build/badge.svg)
+![](https://github.com/skyscrapr/cloudability-sdk-go/workflows/build/badge.svg)
 
 cloudability-sdk-go is and unofficial Cloudability SDK for the Go programming language.
 
