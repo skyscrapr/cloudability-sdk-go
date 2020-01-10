@@ -1,3 +1,4 @@
+// Cloudability package provides a client for the cloudability api.
 package cloudability
 
 import (
@@ -8,24 +9,25 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"time"
 	"path"
+	"time"
+	"errors"
 )
 
 const (
-	// endpoints
 	api_v1_url = "https://app.cloudability.com"
 	api_v3_url = "https://api.cloudability.com"
 )
 
-// Cloudability http client
+// Cloudability client.
 type CloudabilityClient struct {
 	BusinessMappings *businessMappingsEndpoint
-	Users *usersEndpoint
-	Vendors *vendorsEndpoint
-	Views *viewsEndpoint
+	Users            *usersEndpoint
+	Vendors          *vendorsEndpoint
+	Views            *viewsEndpoint
 }
 
+// This constructor creates a client that provides access to all available cloudability endpoints.
 func NewCloudabilityClient(apikey string) *CloudabilityClient {
 	c := &CloudabilityClient{}
 	c.BusinessMappings = newBusinessMappingsEndpoint(apikey)
@@ -35,12 +37,16 @@ func NewCloudabilityClient(apikey string) *CloudabilityClient {
 	return c
 }
 
+type cloudabilityEndpointI interface {
+	newRequest(method string, path string, body interface{}) (*http.Request, error)
+}
+
 type cloudabilityEndpoint struct {
 	*http.Client
-	BaseURL *url.URL
+	BaseURL      *url.URL
 	EndpointPath string
-	UserAgent string
-	apikey string
+	UserAgent    string
+	apikey       string
 }
 
 type cloudabilityV3Endpoint struct {
@@ -57,9 +63,9 @@ type resultTemplate struct {
 
 func newCloudabilityEndpoint(apikey string) *cloudabilityEndpoint {
 	e := &cloudabilityEndpoint{
-		Client: &http.Client{Timeout: 10 * time.Second},
+		Client:    &http.Client{Timeout: 10 * time.Second},
 		UserAgent: "cloudability-sdk-go",
-		apikey: apikey,
+		apikey:    apikey,
 	}
 	return e
 }
@@ -76,25 +82,25 @@ func newCloudabilityV1Endpoint(apikey string) *cloudabilityV1Endpoint {
 	return e
 }
 
-func (e *cloudabilityEndpoint) get(endpoint string, result interface{}) error {
-	return e.exec("GET", endpoint, nil, result)
+func (e *cloudabilityEndpoint) get(ce cloudabilityEndpointI, endpoint string, result interface{}) error {
+	return e.exec(ce, "GET", endpoint, nil, result)
 }
 
-func (e *cloudabilityEndpoint) post(endpoint string, body interface{}, result interface{}) error {
-	return e.exec("POST", endpoint, body, result)
+func (e *cloudabilityEndpoint) post(ce cloudabilityEndpointI, endpoint string, body interface{}, result interface{}) error {
+	return e.exec(ce, "POST", endpoint, body, result)
 }
 
-func (e *cloudabilityEndpoint) put(endpoint string, body interface{}) error {
-	return e.exec("PUT", endpoint, body, nil)
+func (e *cloudabilityEndpoint) put(ce cloudabilityEndpointI, endpoint string, body interface{}) error {
+	return e.exec(ce, "PUT", endpoint, body, nil)
 }
 
-func (e *cloudabilityEndpoint) delete(endpoint string) error {
-	return e.exec("DELETE", endpoint, nil, nil)
+func (e *cloudabilityEndpoint) delete(ce cloudabilityEndpointI, endpoint string) error {
+	return e.exec(ce, "DELETE", endpoint, nil, nil)
 }
 
-func (e *cloudabilityEndpoint) exec(method string, endpoint string, body interface{}, result interface{}) error {
+func (e *cloudabilityEndpoint) exec(ce cloudabilityEndpointI, method string, endpoint string, body interface{}, result interface{}) error {
 	endpointPath := path.Join(e.EndpointPath, endpoint)
-	req, err := e.newRequest(method, endpointPath, body)
+	req, err := ce.newRequest(method, endpointPath, body)
 	if err != nil {
 		return err
 	}
@@ -111,9 +117,9 @@ func (e *cloudabilityEndpoint) execRequest(req *http.Request, result interface{}
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
-		log.Print(string(bodyBytes))
+		return nil, errors.New(string(bodyBytes))
 	}
 	if result != nil {
 		resultTemplate := &resultTemplate{

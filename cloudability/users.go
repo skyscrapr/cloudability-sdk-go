@@ -27,13 +27,13 @@ type User struct {
 
 func (e *usersEndpoint) GetUsers() ([]User, error) {
 	var users []User
-	err := e.get("", &users)
+	err := e.get(e, "", &users)
 	return users, err
 }
 
 func (e *usersEndpoint) GetUser(id int) (*User, error) {
 	var user User
-	err := e.get(strconv.Itoa(id), &user)
+	err := e.get(e, strconv.Itoa(id), &user)
 	return &user, err
 }
 
@@ -58,7 +58,7 @@ func (e *usersEndpoint) NewUser(user *User) error {
 	userPayloadWrapper := &userNewPayloadWrapper{
 		User: userPayload,
 	}
-	return e.post("", userPayloadWrapper, nil)
+	return e.post(e, "", userPayloadWrapper, nil)
 }
 
 type userUpdatePayloadWrapper struct {
@@ -81,9 +81,9 @@ func (e *usersEndpoint) UpdateUser(user *User) error {
 	userPayloadWrapper := &userUpdatePayloadWrapper{
 		User: userPayload,
 	}
-	return e.put(strconv.Itoa(user.Id), userPayloadWrapper)
+	return e.put(e, strconv.Itoa(user.Id), userPayloadWrapper)
 }
 
 func (e *usersEndpoint) DeleteUser(id int) error {
-	return e.delete(strconv.Itoa(id))
+	return e.delete(e, strconv.Itoa(id))
 }

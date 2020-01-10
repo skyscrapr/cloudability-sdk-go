@@ -37,35 +37,40 @@ type businessMappingPayload struct {
 	UpdatedAt string
 }
 
+// Get a list of all existing business mappings.
 func (e *businessMappingsEndpoint) GetBusinessMappings() ([]BusinessMapping, error) {
 	var businessMappings []BusinessMapping
-	err := e.get("", &businessMappings)
+	err := e.get(e, "", &businessMappings)
 	return businessMappings, err
 }
 
+// Get an existing business mapping by index.
 func (e *businessMappingsEndpoint) GetBusinessMapping(index int) (*BusinessMapping, error) {
 	var businessMapping BusinessMapping
-	err := e.get(strconv.Itoa(index), &businessMapping)
+	err := e.get(e, strconv.Itoa(index), &businessMapping)
 	return &businessMapping, err
 }
 
+// Create a new business mapping.
 func (e *businessMappingsEndpoint) NewBusinessMapping(businessMapping *BusinessMapping) (*BusinessMapping, error) {
 	businessMappingPayload := new(businessMappingPayload)
 	jsonBusinessMapping, _ := json.Marshal(businessMappingPayload)
 	json.Unmarshal(jsonBusinessMapping, businessMappingPayload)
 	var newBusinessMapping BusinessMapping
-	err := e.post("", businessMappingPayload, &newBusinessMapping)
+	err := e.post(e, "", businessMappingPayload, &newBusinessMapping)
 	return &newBusinessMapping, err
 }
 
+// Update an existing business mapping using given index.
 func (e *businessMappingsEndpoint) UpdateBusinessMapping(businessMapping *BusinessMapping) error {
 	businessMappingPayload := new(businessMappingPayload)
 	jsonBusinessMapping, _ := json.Marshal(businessMappingPayload)
 	json.Unmarshal(jsonBusinessMapping, businessMappingPayload)
-	return e.put(strconv.Itoa(businessMapping.Index), businessMappingPayload)
+	return e.put(e, strconv.Itoa(businessMapping.Index), businessMappingPayload)
 }
 
+// Delete an existing business mapping by index.
 func (e *businessMappingsEndpoint) DeleteBusinessMapping(index int) error {
-	err := e.delete(strconv.Itoa(index))
+	err := e.delete(e, strconv.Itoa(index))
 	return err
 }

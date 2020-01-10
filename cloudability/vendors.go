@@ -2,7 +2,6 @@ package cloudability
 
 import (
 	"fmt"
-	"strconv"
 )
 
 
@@ -47,25 +46,26 @@ type Account struct {
 
 func (e vendorsEndpoint) GetVendors() ([]Vendor, error) {
 	var vendors []Vendor
-	err := e.get("", &vendors)
+	err := e.get(e, "", &vendors)
 	return vendors, err
 }
 
 func (e vendorsEndpoint) GetAccounts(vendor string) ([]Account, error) {
 	var accounts []Account
-	err := e.get(fmt.Sprintf("%s/accounts/", vendor), &accounts)
+	err := e.get(e, fmt.Sprintf("%s/accounts/", vendor), &accounts)
 	return accounts, err
 }
 
-func (e vendorsEndpoint) GetAccount(vendor string, id int) (*Account, error) {
+func (e vendorsEndpoint) GetAccount(vendor string, accountId string) (*Account, error) {
 	var account Account
-	err := e.get(fmt.Sprintf("%s/accounts/%s", vendor, strconv.Itoa(id)), &account)
+	err := e.get(e, fmt.Sprintf("%s/accounts/%s", vendor, accountId), &account)
 	return &account, err
 }
 
-func (e vendorsEndpoint) VerifyAccount(vendor string, accountId string) error {
-	err := e.post(fmt.Sprintf("%s/accounts/%s/verification", vendor, accountId), nil, nil)
-	return err
+func (e vendorsEndpoint) VerifyAccount(vendor string, accountId string) (*Account, error) {
+	var account Account
+	err := e.post(e, fmt.Sprintf("%s/accounts/%s/verification", vendor, accountId), nil, &account)
+	return &account, err
 }
 
 type newCredentialParams struct {
@@ -79,11 +79,11 @@ func (e vendorsEndpoint) NewAccount(vendorKey string, accountId string, credType
 		VendorAccountId: accountId,
 		Type: credType,
 	}
-	err := e.post(fmt.Sprintf("%s/accounts", vendorKey), body, &account)
+	err := e.post(e, fmt.Sprintf("%s/accounts", vendorKey), body, &account)
 	return &account, err
 }
 
-func (e vendorsEndpoint) DeleteAccount(vendor string, id string) error {
-	err := e.delete(fmt.Sprintf("%s/accounts/%s", vendor, id))
+func (e vendorsEndpoint) DeleteAccount(vendor string, accountId string) error {
+	err := e.delete(e, fmt.Sprintf("%s/accounts/%s", vendor, accountId))
 	return err
 }

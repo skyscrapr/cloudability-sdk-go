@@ -43,19 +43,19 @@ func TestGetCredential(t *testing.T) {
 
 	e := newVendorsEndpoint("testapikey")
 	e.BaseURL, _= url.Parse(testServer.URL)
-	_, err := e.GetAccount("aws", 123456789012)
+	_, err := e.GetAccount("aws", "123456789012")
 	if err != nil{
 		t.Fail()
 	}
 }
 
-func TestVerifyCredential(t *testing.T) {
+func TestVerifyAccount(t *testing.T) {
 	testServer := testRequest(t, "POST", "/v3/vendors/aws/accounts/123456789012/verification", nil)
 	defer testServer.Close()
 
 	e := newVendorsEndpoint("testapikey")
 	e.BaseURL, _= url.Parse(testServer.URL)
-	err := e.VerifyAccount("aws", "123456789012")
+	_, err := e.VerifyAccount("aws", "123456789012")
 	if err != nil{
 		t.Fail()
 	}
