@@ -4,15 +4,14 @@ import (
 	"fmt"
 )
 
+const vendors_endpoint = "/v3/vendors/"
 
 type vendorsEndpoint struct {
-	*cloudabilityV3Endpoint
+	*v3Endpoint
 }
 
-func newVendorsEndpoint(apikey string) *vendorsEndpoint {
-	e := &vendorsEndpoint{newCloudabilityV3Endpoint(apikey)}
-	e.EndpointPath = "/v3/vendors/"
-	return e
+func (c *Client) Vendors() *vendorsEndpoint {
+	return &vendorsEndpoint{newV3Endpoint(c, vendors_endpoint)}
 }
 
 type Vendor struct {
@@ -31,6 +30,8 @@ type Authorization struct {
 	Type string `json:"type"`
 	RoleName string `json:"roleName"`
 	ExternalId string `json:"externalId"`
+	BucketName *string `json:"bucketName,omitempty"`
+	CostAndUsageReport *CostAndUsageReport `json:"costAndUsageReport,omitempty"`
 }
 
 type Account struct {
@@ -68,18 +69,31 @@ func (e vendorsEndpoint) VerifyAccount(vendor string, accountId string) (*Accoun
 	return &account, err
 }
 
-type newCredentialParams struct {
-	VendorAccountId string `json:"vendorAccountId"`
-	Type string `json:"type"`
+type CostAndUsageReport struct {
+	Name *string `json:"name,omitempty"`
+	Prefix *string `json:"prefix,omitempty"`
 }
 
-func (e vendorsEndpoint) NewAccount(vendorKey string, accountId string, credType string) (*Account, error) {
+type NewLinkedAccountParams struct {
+	VendorAccountId string `json:"vendorAccountId"`
+	Type string `json:"type"` 
+}
+
+type NewMasterAccountParams struct {
+	*NewLinkedAccountParams 
+	BucketName string `json:"bucketName"`
+	CostAndUsageReport *CostAndUsageReport `json:"costAndUsageReport"`
+}
+
+func (e vendorsEndpoint) NewMasterAccount(vendorKey string, newAccountParams *NewMasterAccountParams) (*Account, error) {
 	var account Account
-	body := &newCredentialParams{
-		VendorAccountId: accountId,
-		Type: credType,
-	}
-	err := e.post(e, fmt.Sprintf("%s/accounts", vendorKey), body, &account)
+	err := e.post(e, fmt.Sprintf("%s/accounts", vendorKey), newAccountParams, &account)
+	return &account, err
+}
+
+func (e vendorsEndpoint) NewLinkedAccount(vendorKey string, newAccountParams *NewLinkedAccountParams) (*Account, error) {
+	var account Account
+	err := e.post(e, fmt.Sprintf("%s/accounts", vendorKey), newAccountParams, &account)
 	return &account, err
 }
 

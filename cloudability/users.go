@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 )
 
+const users_endpoint = "/api/1/users/"
+
 type usersEndpoint struct {
-	*cloudabilityV1Endpoint
+	*v1Endpoint
 }
 
-func newUsersEndpoint(apikey string) *usersEndpoint {
-	e := &usersEndpoint{newCloudabilityV1Endpoint(apikey)}
-	e.EndpointPath = "/api/1/users/"
-	return e
+func (c *Client) Users() *usersEndpoint {
+	return &usersEndpoint{newV1Endpoint(c, users_endpoint)}
 }
 
 type User struct {

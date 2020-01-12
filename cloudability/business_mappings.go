@@ -5,15 +5,16 @@ import (
 	"encoding/json"
 )
 
+const business_mappings_endpoint = "/v3/business-mappings/"
+
 type businessMappingsEndpoint struct {
-	*cloudabilityV3Endpoint
+	*v3Endpoint
 }
 
-func newBusinessMappingsEndpoint(apikey string) *businessMappingsEndpoint {
-	e := &businessMappingsEndpoint{newCloudabilityV3Endpoint(apikey)}
-	e.EndpointPath = "/v3/business-mappings/"
-	return e
+func (c *Client) BusinessMappings() *businessMappingsEndpoint {
+	return &businessMappingsEndpoint{newV3Endpoint(c, business_mappings_endpoint)}
 }
+
 
 type BusinessMappingStatement struct {
 	MatchExpression string `json:"matchExpression"`
@@ -25,7 +26,7 @@ type BusinessMapping struct {
 	Kind string `json:"kind"`
 	Name string `json:"name"`
 	DefaultValue string `json:"defaultValue"`
-	Statements []BusinessMappingStatement `json:"statements"`
+	Statements []*BusinessMappingStatement `json:"statements"`
 	UpdatedAt string
 }
 
@@ -33,7 +34,7 @@ type businessMappingPayload struct {
 	Kind string `json:"kind"`
 	Name string `json:"name"`
 	DefaultValue string `json:"defaultValue"`
-	Statements []BusinessMappingStatement `json:"statements"`
+	Statements []*BusinessMappingStatement `json:"statements"`
 	UpdatedAt string
 }
 
@@ -54,7 +55,7 @@ func (e *businessMappingsEndpoint) GetBusinessMapping(index int) (*BusinessMappi
 // Create a new business mapping.
 func (e *businessMappingsEndpoint) NewBusinessMapping(businessMapping *BusinessMapping) (*BusinessMapping, error) {
 	businessMappingPayload := new(businessMappingPayload)
-	jsonBusinessMapping, _ := json.Marshal(businessMappingPayload)
+	jsonBusinessMapping, _ := json.Marshal(businessMapping)
 	json.Unmarshal(jsonBusinessMapping, businessMappingPayload)
 	var newBusinessMapping BusinessMapping
 	err := e.post(e, "", businessMappingPayload, &newBusinessMapping)

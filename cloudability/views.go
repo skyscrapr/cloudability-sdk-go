@@ -5,15 +5,14 @@ import (
 	"encoding/json"
 )
 
+const views_endpoint = "/v3/views/"
 
 type viewsEndpoint struct {
-	*cloudabilityV3Endpoint
+	*v3Endpoint
 }
 
-func newViewsEndpoint(apikey string) *viewsEndpoint {
-	e := &viewsEndpoint{newCloudabilityV3Endpoint(apikey)}
-	e.EndpointPath = "/v3/views/"
-	return e
+func (c *Client) Views() *viewsEndpoint {
+	return &viewsEndpoint{newV3Endpoint(c, views_endpoint)}
 }
 
 type ViewFilter struct {
