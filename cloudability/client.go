@@ -37,6 +37,15 @@ func NewClient(apikey string) *Client {
 	return c
 }
 
+type APIError struct {
+	Error errorDetail `json:"error"`
+}
+
+type errorDetail struct {
+	Code float64 `json:"code"`
+	Messages []string `json:"messages"`
+}
+
 type endpointI interface {
 	buildURL(endpoint string) *url.URL
 	newRequest(method string, u *url.URL, body interface{}) (*http.Request, error)

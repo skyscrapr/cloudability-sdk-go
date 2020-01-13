@@ -1,7 +1,6 @@
 package cloudability
 
 import (
-	"strconv"
 	"encoding/json"
 )
 
@@ -22,12 +21,12 @@ type ViewFilter struct {
 }
 
 type View struct {
-	Id int `json:"id"`
+	Id string `json:"id"`
 	Title string `json:"title"`
 	SharedWithUsers []string `json:"sharedWithUsers"`
 	SharedWithOrganization bool `json:"sharedWithOrganization"`
 	OwnerId string `json:"ownerId"`
-	Filters []ViewFilter `json:"filters"`
+	Filters []*ViewFilter `json:"filters"`
 }
 
 func (e viewsEndpoint) GetViews() ([]View, error) {
@@ -36,9 +35,9 @@ func (e viewsEndpoint) GetViews() ([]View, error) {
 	return views, err
 }
 
-func (e viewsEndpoint) GetView(id int) (*View, error) {
+func (e viewsEndpoint) GetView(id string) (*View, error) {
 	var view View
-	err := e.get(e, strconv.Itoa(id), &view)
+	err := e.get(e, id, &view)
 	return &view, err
 }
 
@@ -62,9 +61,9 @@ func (e *viewsEndpoint) UpdateView(view *View) error {
 	viewPayload := new(viewPayload)
 	jsonView, _ := json.Marshal(view)
     json.Unmarshal(jsonView, viewPayload)
-	return e.put(e, strconv.Itoa(view.Id), viewPayload)
+	return e.put(e, view.Id, viewPayload)
 }
 
-func (e *viewsEndpoint) DeleteView(id int) error {
-	return e.delete(e, strconv.Itoa(id))
+func (e *viewsEndpoint) DeleteView(id string) error {
+	return e.delete(e, id)
 }

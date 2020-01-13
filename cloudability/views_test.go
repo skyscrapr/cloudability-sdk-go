@@ -34,7 +34,7 @@ func TestGetView(t *testing.T) {
 	testClient := NewClient("testapikey")
 	e := testClient.Views()
 	e.BaseURL, _ = url.Parse(testServer.URL)
-	_, err := e.GetView(1)
+	_, err := e.GetView("1")
 	if err != nil{
 		t.Fail()
 	}
@@ -42,7 +42,7 @@ func TestGetView(t *testing.T) {
 
 func TestNewView(t *testing.T) {
 	view := &View{
-		Id: 1,
+		Id: "1",
 
 	}
 	testServer := testRequest(t, "POST", "/v3/views", view)
@@ -60,7 +60,7 @@ func TestUpdateView(t *testing.T) {
 	testServer := testRequest(t, "PUT", "/v3/views/1", nil)
 	defer testServer.Close()
 	view := &View{
-		Id: 1,
+		Id: "1",
 		Title: "Test View",
 
 	}
@@ -79,7 +79,7 @@ func TestDeleteView(t *testing.T) {
 	testClient := NewClient("testapikey")
 	e := testClient.Views()
 	e.BaseURL, _ = url.Parse(testServer.URL)
-	err := e.DeleteView(1)
+	err := e.DeleteView("1")
 	if err != nil{
 		t.Fail()
 	}
