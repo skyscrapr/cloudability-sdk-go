@@ -39,8 +39,8 @@ type Account struct {
 	VendorAccountName string `json:"vendorAccountName"`
 	VendorAccountId string `json:"vendorAccountId"`
 	VendorKey string `json:"vendorKey"`
-	Verification Verification `json:"verification"`
-	Authorization Authorization `json:"authorization"`
+	Verification *Verification `json:"verification"`
+	Authorization *Authorization `json:"authorization"`
 	ParentAccountId string `json:"parentAccountId"`
 	CreatedAt string `json:"createdAt"`
 }
