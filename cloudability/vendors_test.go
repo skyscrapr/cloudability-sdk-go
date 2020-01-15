@@ -28,7 +28,7 @@ func TestGetVendors(t *testing.T) {
 	}
 }
 
-func TestGetCredentials(t *testing.T) {
+func TestGetAccounts(t *testing.T) {
 	testServer := testRequest(t, "GET", "/v3/vendors/aws/accounts", nil)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
@@ -40,7 +40,7 @@ func TestGetCredentials(t *testing.T) {
 	}
 }
 
-func TestGetCredential(t *testing.T) {
+func TestGetAccount(t *testing.T) {
 	testServer := testRequest(t, "GET", "/v3/vendors/aws/accounts/123456789012", nil)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
@@ -112,7 +112,7 @@ func TestNewMasterAccount(t *testing.T) {
 	}
 }
 
-func TestDeleteCredential(t *testing.T) {
+func TestDeleteAccount(t *testing.T) {
 	testServer := testRequest(t, "DELETE", "/v3/vendors/aws/accounts/123456789012", nil)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
