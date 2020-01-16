@@ -103,8 +103,8 @@ func TestNewMasterAccount(t *testing.T) {
 		},
 		BucketName: "cloudability-123456789012",
 		CostAndUsageReport: &CostAndUsageReport{
-			Name: &name,
-			Prefix: &prefix,
+			Name: name,
+			Prefix: prefix,
 		},
 	})
 	if err != nil{

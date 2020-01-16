@@ -70,8 +70,8 @@ func (e vendorsEndpoint) VerifyAccount(vendor string, accountId string) (*Accoun
 }
 
 type CostAndUsageReport struct {
-	Name *string `json:"name,omitempty"`
-	Prefix *string `json:"prefix,omitempty"`
+	Name string `json:"name,omitempty"`
+	Prefix string `json:"prefix,omitempty"`
 }
 
 type NewLinkedAccountParams struct {
