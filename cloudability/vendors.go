@@ -4,100 +4,116 @@ import (
 	"fmt"
 )
 
-const vendors_endpoint = "/v3/vendors/"
+const vendorsEndpoint = "/v3/vendors/"
 
-type vendorsEndpoint struct {
+// VendorsEndpoint - Cloudabiity Vendors Endpoint
+type VendorsEndpoint struct {
 	*v3Endpoint
 }
 
-func (c *Client) Vendors() *vendorsEndpoint {
-	return &vendorsEndpoint{newV3Endpoint(c, vendors_endpoint)}
+// Vendors - Vendors Endpoint
+func (c *Client) Vendors() *VendorsEndpoint {
+	return &VendorsEndpoint{newV3Endpoint(c, vendorsEndpoint)}
 }
 
+// Vendor - Cloudability Vendor
 type Vendor struct {
 	Key string `json:"key"`
 	Label string `json:"label"`
 	Description string `json:"description"`
 }
 
+// Verification - Cloudability Verification
 type Verification struct {
 	State string `json:"state"`
 	LastVerificationAttemptedAt string `json:"lastVerificationAttemptedAt"`
 	Message string `json:"message"`
 }
 
+// Authorization - Cloudabiity Authorization
 type Authorization struct {
 	Type string `json:"type"`
 	RoleName string `json:"roleName"`
-	ExternalId string `json:"externalId"`
+	ExternalID string `json:"externalId"`
 	BucketName *string `json:"bucketName,omitempty"`
 	CostAndUsageReport *CostAndUsageReport `json:"costAndUsageReport,omitempty"`
 }
 
+// Account - Cloudability Account
 type Account struct {
-	Id string `json:"id"`
+	ID string `json:"id"`
 	VendorAccountName string `json:"vendorAccountName"`
-	VendorAccountId string `json:"vendorAccountId"`
+	VendorAccountID string `json:"vendorAccountId"`
 	VendorKey string `json:"vendorKey"`
 	Verification *Verification `json:"verification"`
 	Authorization *Authorization `json:"authorization"`
-	ParentAccountId string `json:"parentAccountId"`
+	ParentAccountID string `json:"parentAccountId"`
 	CreatedAt string `json:"createdAt"`
 }
 
-func (e vendorsEndpoint) GetVendors() ([]Vendor, error) {
+// GetVendors - get all vendors
+func (e VendorsEndpoint) GetVendors() ([]Vendor, error) {
 	var vendors []Vendor
 	err := e.get(e, "", &vendors)
 	return vendors, err
 }
 
-func (e vendorsEndpoint) GetAccounts(vendor string) ([]Account, error) {
+// GetAccounts - get all accounts for a given vendor
+func (e VendorsEndpoint) GetAccounts(vendor string) ([]Account, error) {
 	var accounts []Account
 	err := e.get(e, fmt.Sprintf("%s/accounts/", vendor), &accounts)
 	return accounts, err
 }
 
-func (e vendorsEndpoint) GetAccount(vendor string, accountId string) (*Account, error) {
+// GetAccount - get a single account for a given vendor
+func (e VendorsEndpoint) GetAccount(vendor string, accountID string) (*Account, error) {
 	var account Account
-	err := e.get(e, fmt.Sprintf("%s/accounts/%s", vendor, accountId), &account)
+	err := e.get(e, fmt.Sprintf("%s/accounts/%s", vendor, accountID), &account)
 	return &account, err
 }
 
-func (e vendorsEndpoint) VerifyAccount(vendor string, accountId string) (*Account, error) {
+// VerifyAccount - verify account
+func (e VendorsEndpoint) VerifyAccount(vendor string, accountID string) (*Account, error) {
 	var account Account
-	err := e.post(e, fmt.Sprintf("%s/accounts/%s/verification", vendor, accountId), nil, &account)
+	err := e.post(e, fmt.Sprintf("%s/accounts/%s/verification", vendor, accountID), nil, &account)
 	return &account, err
 }
 
+// CostAndUsageReport - cost and usage report
 type CostAndUsageReport struct {
 	Name string `json:"name,omitempty"`
 	Prefix string `json:"prefix,omitempty"`
 }
 
+// NewLinkedAccountParams - params required to create a new linked account
 type NewLinkedAccountParams struct {
-	VendorAccountId string `json:"vendorAccountId"`
-	Type string `json:"type"` 
+	VendorAccountID string `json:"vendorAccountId"`
+	Type string `json:"type"`
 }
 
+// NewMasterAccountParams - params required to create a new master account
 type NewMasterAccountParams struct {
 	*NewLinkedAccountParams 
 	BucketName string `json:"bucketName"`
 	CostAndUsageReport *CostAndUsageReport `json:"costAndUsageReport"`
 }
 
-func (e vendorsEndpoint) NewMasterAccount(vendorKey string, newAccountParams *NewMasterAccountParams) (*Account, error) {
+// NewMasterAccount - Create a new master account
+func (e VendorsEndpoint) NewMasterAccount(vendorKey string, newAccountParams *NewMasterAccountParams) (*Account, error) {
 	var account Account
 	err := e.post(e, fmt.Sprintf("%s/accounts", vendorKey), newAccountParams, &account)
 	return &account, err
 }
 
-func (e vendorsEndpoint) NewLinkedAccount(vendorKey string, newAccountParams *NewLinkedAccountParams) (*Account, error) {
+// NewLinkedAccount - Create a new linked account
+func (e VendorsEndpoint) NewLinkedAccount(vendorKey string, newAccountParams *NewLinkedAccountParams) (*Account, error) {
 	var account Account
 	err := e.post(e, fmt.Sprintf("%s/accounts", vendorKey), newAccountParams, &account)
 	return &account, err
 }
 
-func (e vendorsEndpoint) DeleteAccount(vendor string, accountId string) error {
-	err := e.delete(e, fmt.Sprintf("%s/accounts/%s", vendor, accountId))
+// DeleteAccount - Delete an account
+func (e VendorsEndpoint) DeleteAccount(vendor string, accountID string) error {
+	err := e.delete(e, fmt.Sprintf("%s/accounts/%s", vendor, accountID))
 	return err
 }

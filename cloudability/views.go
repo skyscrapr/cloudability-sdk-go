@@ -4,38 +4,44 @@ import (
 	"encoding/json"
 )
 
-const views_endpoint = "/v3/views/"
+const viewsEndpoint = "/v3/views/"
 
-type viewsEndpoint struct {
+// ViewsEndpoint - Cloudability Views Endpoint
+type ViewsEndpoint struct {
 	*v3Endpoint
 }
 
-func (c *Client) Views() *viewsEndpoint {
-	return &viewsEndpoint{newV3Endpoint(c, views_endpoint)}
+// Views endpoint
+func (c *Client) Views() *ViewsEndpoint {
+	return &ViewsEndpoint{newV3Endpoint(c, viewsEndpoint)}
 }
 
+// ViewFilter - Cloudability ViewFilter
 type ViewFilter struct {
 	Field string `json:"field"`
 	Comparator string `json:"comparator"`
 	Value string `json:"value"`
 }
 
+// View - Cloudabiity View
 type View struct {
-	Id string `json:"id"`
+	ID string `json:"id"`
 	Title string `json:"title"`
 	SharedWithUsers []string `json:"sharedWithUsers"`
 	SharedWithOrganization bool `json:"sharedWithOrganization"`
-	OwnerId string `json:"ownerId"`
+	OwnerID string `json:"ownerId"`
 	Filters []*ViewFilter `json:"filters"`
 }
 
-func (e viewsEndpoint) GetViews() ([]View, error) {
+// GetViews - returns all views
+func (e ViewsEndpoint) GetViews() ([]View, error) {
 	var views []View
 	err := e.get(e, "", &views)
 	return views, err
 }
 
-func (e viewsEndpoint) GetView(id string) (*View, error) {
+// GetView - return a single view
+func (e ViewsEndpoint) GetView(id string) (*View, error) {
 	var view View
 	err := e.get(e, id, &view)
 	return &view, err
@@ -48,7 +54,8 @@ type viewPayload struct {
 	Filters []ViewFilter `json:"filters"`
 }
 
-func (e *viewsEndpoint) NewView(view *View) (*View, error) {
+// NewView - create a new view
+func (e *ViewsEndpoint) NewView(view *View) (*View, error) {
 	viewPayload := new(viewPayload)
 	jsonView, _ := json.Marshal(view)
 	json.Unmarshal(jsonView, viewPayload)
@@ -57,13 +64,15 @@ func (e *viewsEndpoint) NewView(view *View) (*View, error) {
 	return &newView, err
 }
 
-func (e *viewsEndpoint) UpdateView(view *View) error {
+// UpdateView - update a view
+func (e *ViewsEndpoint) UpdateView(view *View) error {
 	viewPayload := new(viewPayload)
 	jsonView, _ := json.Marshal(view)
     json.Unmarshal(jsonView, viewPayload)
-	return e.put(e, view.Id, viewPayload)
+	return e.put(e, view.ID, viewPayload)
 }
 
-func (e *viewsEndpoint) DeleteView(id string) error {
+// DeleteView - delete a view
+func (e *ViewsEndpoint) DeleteView(id string) error {
 	return e.delete(e, id)
 }

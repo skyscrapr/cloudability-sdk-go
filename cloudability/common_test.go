@@ -12,8 +12,8 @@ func testRequest(t *testing.T, method string, path string, body interface{}) *ht
 		if req.Method != method {
 			t.Errorf("Expected request method ‘%s’, got ‘%s’", method, req.Method)
 		}
-		if req.URL.EscapedPath() != path {
-			t.Errorf("Expected request to ‘%s’, got ‘%s’", path, req.URL.EscapedPath())
+		if req.URL.Path != path {
+			t.Errorf("Expected request to ‘%s’, got ‘%s’", path, req.URL.Path)
 		}
 		// TODO: Fix this
 		// if body != nil {

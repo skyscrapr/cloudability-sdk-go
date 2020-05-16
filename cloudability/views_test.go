@@ -8,11 +8,11 @@ import (
 func TestNewViewsEndpoint(t *testing.T) {
 	testClient := NewClient("testapikey")
 	e := testClient.Views()
-	if e.BaseURL.String() != api_v3_url {
-		t.Errorf("ViewsEndpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), api_v3_url)
+	if e.BaseURL.String() != apiV3URL {
+		t.Errorf("ViewsEndpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), apiV3URL)
 	}
-	if e.EndpointPath != views_endpoint {
-		t.Errorf("ViewsEndpoint EndpointPath mismatch. Got %s. Expected %s", e.EndpointPath, views_endpoint)
+	if e.EndpointPath != viewsEndpoint {
+		t.Errorf("ViewsEndpoint EndpointPath mismatch. Got %s. Expected %s", e.EndpointPath, viewsEndpoint)
 	}
 }
 
@@ -42,7 +42,7 @@ func TestGetView(t *testing.T) {
 
 func TestNewView(t *testing.T) {
 	view := &View{
-		Id: "1",
+		ID: "1",
 
 	}
 	testServer := testRequest(t, "POST", "/v3/views", view)
@@ -60,7 +60,7 @@ func TestUpdateView(t *testing.T) {
 	testServer := testRequest(t, "PUT", "/v3/views/1", nil)
 	defer testServer.Close()
 	view := &View{
-		Id: "1",
+		ID: "1",
 		Title: "Test View",
 
 	}
