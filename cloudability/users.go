@@ -5,33 +5,38 @@ import (
 	"encoding/json"
 )
 
-const users_endpoint = "/api/1/users/"
+const usersEndpoint = "/api/1/users/"
 
-type usersEndpoint struct {
+// UsersEndpoint - Cloudability Users Endpoint
+type UsersEndpoint struct {
 	*v1Endpoint
 }
 
-func (c *Client) Users() *usersEndpoint {
-	return &usersEndpoint{newV1Endpoint(c, users_endpoint)}
+// Users - Cloudability Users Endpoint
+func (c *Client) Users() *UsersEndpoint {
+	return &UsersEndpoint{newV1Endpoint(c, usersEndpoint)}
 }
 
+// User - Cloudability User
 type User struct {
-	Id int `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	Email string `json:"email"`
 	FullName string `json:"full_name"`
 	Role string `json:"role"`
 	Restricted bool `json:"restricted"`
-	SharedDimensionFilterSetIds []int `json:"shared_dimension_filter_set_ids"`
-	DefaultDimensionFilterId int `json:"default_dimension_filer_set_id"`
+	SharedDimensionFilterSetIDs []int `json:"shared_dimension_filter_set_ids"`
+	DefaultDimensionFilterID int `json:"default_dimension_filer_set_id"`
 }
 
-func (e *usersEndpoint) GetUsers() ([]User, error) {
+// GetUsers - Get all users
+func (e *UsersEndpoint) GetUsers() ([]User, error) {
 	var users []User
 	err := e.get(e, "", &users)
 	return users, err
 }
 
-func (e *usersEndpoint) GetUser(id int) (*User, error) {
+// GetUser - Get user
+func (e *UsersEndpoint) GetUser(id int) (*User, error) {
 	var user User
 	err := e.get(e, strconv.Itoa(id), &user)
 	return &user, err
@@ -46,11 +51,12 @@ type userNewPayload struct {
 	FullName string `json:"full_name"`
 	Role string `json:"role"`
 	Restricted bool `json:"restricted"`
-	SharedDimensionFilterSetIds []int `json:"shared_dimension_filter_set_ids"`
-	DefaultDimensionFilterId int `json:"default_dimension_filer_set_id"`
+	SharedDimensionFilterSetIDs []int `json:"shared_dimension_filter_set_ids"`
+	DefaultDimensionFilterID int `json:"default_dimension_filer_set_id"`
 }
 
-func (e *usersEndpoint) NewUser(user *User) error {
+// NewUser - Create a user
+func (e *UsersEndpoint) NewUser(user *User) error {
 	userPayload := new(userNewPayload)
 	jsonUser, _ := json.Marshal(user)
     json.Unmarshal(jsonUser, userPayload)
@@ -69,11 +75,12 @@ type userUpdatePayload struct {
 	FullName string `json:"full_name"`
 	Role string `json:"role"`
 	Restricted bool `json:"restricted"`
-	SharedDimensionFilterSetIds []int `json:"shared_dimension_filter_set_ids"`
-	DefaultDimensionFilterId int `json:"default_dimension_filer_set_id"`
+	SharedDimensionFilterSetIDs []int `json:"shared_dimension_filter_set_ids"`
+	DefaultDimensionFilterID int `json:"default_dimension_filer_set_id"`
 }
 
-func (e *usersEndpoint) UpdateUser(user *User) error {
+// UpdateUser - Update a user
+func (e *UsersEndpoint) UpdateUser(user *User) error {
 	userPayload := new(userUpdatePayload)
 	jsonUser, _ := json.Marshal(user)
     json.Unmarshal(jsonUser, userPayload)
@@ -81,9 +88,10 @@ func (e *usersEndpoint) UpdateUser(user *User) error {
 	userPayloadWrapper := &userUpdatePayloadWrapper{
 		User: userPayload,
 	}
-	return e.put(e, strconv.Itoa(user.Id), userPayloadWrapper)
+	return e.put(e, strconv.Itoa(user.ID), userPayloadWrapper)
 }
 
-func (e *usersEndpoint) DeleteUser(id int) error {
+// DeleteUser - Delete a user
+func (e *UsersEndpoint) DeleteUser(id int) error {
 	return e.delete(e, strconv.Itoa(id))
 }

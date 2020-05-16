@@ -5,22 +5,25 @@ import (
 	"encoding/json"
 )
 
-const business_mappings_endpoint = "/v3/business-mappings/"
+const businessMappingsEndpoint = "/v3/business-mappings/"
 
-type businessMappingsEndpoint struct {
+// BusinessMappingsEndpoint - Cloudability BusinessMappingsEndpoint
+type BusinessMappingsEndpoint struct {
 	*v3Endpoint
 }
 
-func (c *Client) BusinessMappings() *businessMappingsEndpoint {
-	return &businessMappingsEndpoint{newV3Endpoint(c, business_mappings_endpoint)}
+// BusinessMappings - return a Cloudability BusinessMappingsEndpoint
+func (c *Client) BusinessMappings() *BusinessMappingsEndpoint {
+	return &BusinessMappingsEndpoint{newV3Endpoint(c, businessMappingsEndpoint)}
 }
 
-
+// BusinessMappingStatement - Cloudability Business Mapping Statement
 type BusinessMappingStatement struct {
 	MatchExpression string `json:"matchExpression"`
 	ValueExpression string `json:"valueExpression"`
 }
 
+// BusinessMapping - Cloudability BusinessMapping
 type BusinessMapping struct {
 	Index int `json:"index"`
 	Kind string `json:"kind"`
@@ -38,22 +41,22 @@ type businessMappingPayload struct {
 	UpdatedAt string
 }
 
-// Get a list of all existing business mappings.
-func (e *businessMappingsEndpoint) GetBusinessMappings() ([]BusinessMapping, error) {
+// GetBusinessMappings - Get a list of all existing business mappings.
+func (e *BusinessMappingsEndpoint) GetBusinessMappings() ([]BusinessMapping, error) {
 	var businessMappings []BusinessMapping
 	err := e.get(e, "", &businessMappings)
 	return businessMappings, err
 }
 
-// Get an existing business mapping by index.
-func (e *businessMappingsEndpoint) GetBusinessMapping(index int) (*BusinessMapping, error) {
+// GetBusinessMapping - Get an existing business mapping by index.
+func (e *BusinessMappingsEndpoint) GetBusinessMapping(index int) (*BusinessMapping, error) {
 	var businessMapping BusinessMapping
 	err := e.get(e, strconv.Itoa(index), &businessMapping)
 	return &businessMapping, err
 }
 
-// Create a new business mapping.
-func (e *businessMappingsEndpoint) NewBusinessMapping(businessMapping *BusinessMapping) (*BusinessMapping, error) {
+// NewBusinessMapping - Create a new business mapping.
+func (e *BusinessMappingsEndpoint) NewBusinessMapping(businessMapping *BusinessMapping) (*BusinessMapping, error) {
 	businessMappingPayload := new(businessMappingPayload)
 	jsonBusinessMapping, _ := json.Marshal(businessMapping)
 	json.Unmarshal(jsonBusinessMapping, businessMappingPayload)
@@ -62,16 +65,16 @@ func (e *businessMappingsEndpoint) NewBusinessMapping(businessMapping *BusinessM
 	return &newBusinessMapping, err
 }
 
-// Update an existing business mapping using given index.
-func (e *businessMappingsEndpoint) UpdateBusinessMapping(businessMapping *BusinessMapping) error {
+// UpdateBusinessMapping - Update an existing business mapping using given index.
+func (e *BusinessMappingsEndpoint) UpdateBusinessMapping(businessMapping *BusinessMapping) error {
 	businessMappingPayload := new(businessMappingPayload)
 	jsonBusinessMapping, _ := json.Marshal(businessMappingPayload)
 	json.Unmarshal(jsonBusinessMapping, businessMappingPayload)
 	return e.put(e, strconv.Itoa(businessMapping.Index), businessMappingPayload)
 }
 
-// Delete an existing business mapping by index.
-func (e *businessMappingsEndpoint) DeleteBusinessMapping(index int) error {
+// DeleteBusinessMapping - Delete an existing business mapping by index.
+func (e *BusinessMappingsEndpoint) DeleteBusinessMapping(index int) error {
 	err := e.delete(e, strconv.Itoa(index))
 	return err
 }

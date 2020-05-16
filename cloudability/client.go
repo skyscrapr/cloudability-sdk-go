@@ -15,28 +15,33 @@ import (
 )
 
 const (
-	api_v1_url = "https://app.cloudability.com"
-	api_v3_url = "https://api.cloudability.com"
+	apiV1URL = "https://app.cloudability.com"
+	apiV3URL = "https://api.cloudability.com"
 )
 
-// Cloudability client.
+// Client - Cloudability client.
 type Client struct {
 	*http.Client
-	BaseURL      *url.URL
+	V1BaseURL	 *url.URL
+	V3BaseURL	 *url.URL
+	// BaseURL      *url.URL
 	UserAgent    string
 	apikey       string
 }
 
-// This constructor creates a Cloudability client.
+// NewClient - This constructor creates a Cloudability client.
 func NewClient(apikey string) *Client {
 	c := &Client{
 		Client:    &http.Client{Timeout: 10 * time.Second},
 		UserAgent: "cloudability-sdk-go",
 		apikey:    apikey,
 	}
+	c.V1BaseURL, _ = url.Parse(apiV1URL)
+	c.V3BaseURL, _ = url.Parse(apiV3URL)
 	return c
 }
 
+// APIError - Cloudability Error
 type APIError struct {
 	Error errorDetail `json:"error"`
 }
@@ -65,24 +70,35 @@ type v3Endpoint struct {
 	*endpoint
 }
 
-func newEndpoint(c *Client, baseURL string, endpointPath string) *endpoint {
-	e := &endpoint{Client: c}	
-	e.BaseURL, _ = url.Parse(baseURL)
-	e.EndpointPath = endpointPath
+func newEndpoint(c *Client, baseURL *url.URL, endpointPath string) *endpoint {
+	e := &endpoint{
+		Client: c,
+		BaseURL: baseURL,
+		EndpointPath: endpointPath,
+	}
 	return e
 }
 
 func newV1Endpoint(c *Client, endpointPath string) *v1Endpoint {
-	return &v1Endpoint{newEndpoint(c, api_v1_url, endpointPath)}
+	return &v1Endpoint{newEndpoint(c, c.V1BaseURL, endpointPath)}
 }
 
 func newV3Endpoint(c *Client, endpointPath string) *v3Endpoint {
-	return &v3Endpoint{newEndpoint(c, api_v3_url, endpointPath)}
+	return &v3Endpoint{newEndpoint(c, c.V3BaseURL, endpointPath)}
 }
 
 func (e* endpoint) buildURL(endpointPath string) *url.URL{
-	rel := &url.URL{Path: path.Join(e.EndpointPath, endpointPath)}
-	return e.BaseURL.ResolveReference(rel)
+	u, err := url.Parse(endpointPath)
+    if err != nil {
+        log.Fatal(err)
+	}
+	// base, err := url.Parse("http://example.com/directory/")
+    // if err != nil {
+    //     log.Fatal(err)
+    // }
+	// fmt.Println(base.ResolveReference(u))
+	u.Path = path.Join(e.EndpointPath, u.Path)
+	return e.BaseURL.ResolveReference(u)
 }
 
 type resultTemplate struct {

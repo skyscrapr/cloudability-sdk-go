@@ -9,11 +9,11 @@ import (
 func TestNewBusinessMappingsEndpoint(t *testing.T) {
 	testClient := NewClient("testapikey")
 	e := testClient.BusinessMappings()
-	if e.BaseURL.String() != api_v3_url {
-		t.Errorf("BusinessMappingsEndpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), api_v3_url)
+	if e.BaseURL.String() != apiV3URL {
+		t.Errorf("BusinessMappingsEndpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), apiV3URL)
 	}
-	if e.EndpointPath != business_mappings_endpoint {
-		t.Errorf("BusinessMappingsEndpoint EndpointPath mismatch. Got %s. Expected %s", e.EndpointPath, business_mappings_endpoint)
+	if e.EndpointPath != businessMappingsEndpoint {
+		t.Errorf("BusinessMappingsEndpoint EndpointPath mismatch. Got %s. Expected %s", e.EndpointPath, businessMappingsEndpoint)
 	}
 }
 

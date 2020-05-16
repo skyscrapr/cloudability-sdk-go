@@ -23,12 +23,12 @@ func TestNewClient(t *testing.T) {
 }
 
 func TestNewEndpoint(t *testing.T) {
-	baseURL := "api.test.com"
+	baseURL, _ := url.Parse("api.test.com")
 	endpointPath := "test-endpoint"
 	apikey := "testapikey"
 	testClient := NewClient(apikey)
 	e := newEndpoint(testClient, baseURL, endpointPath)
-	if e.BaseURL.String() != baseURL {
+	if e.BaseURL.String() != baseURL.String() {
 		t.Errorf("Endpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), baseURL)
 	}
 	if e.EndpointPath != endpointPath {
@@ -41,8 +41,8 @@ func TestNewV1Endpoint(t *testing.T) {
 	apikey := "testapikey"
 	testClient := NewClient(apikey)
 	e := newV1Endpoint(testClient, endpointPath)
-	if e.BaseURL.String() != api_v1_url {
-		t.Errorf("V3Endpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), api_v1_url)
+	if e.BaseURL.String() != apiV1URL {
+		t.Errorf("V3Endpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), apiV1URL)
 	}
 	if e.EndpointPath != endpointPath {
 		t.Errorf("V3Endpoint BaseURL mismatch. Got %s. Expected %s", e.EndpointPath, endpointPath)
@@ -54,8 +54,8 @@ func TestNewV3Endpoint(t *testing.T) {
 	apikey := "testapikey"
 	testClient := NewClient(apikey)
 	e := newV3Endpoint(testClient, endpointPath)
-	if e.BaseURL.String() != api_v3_url {
-		t.Errorf("V3Endpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), api_v3_url)
+	if e.BaseURL.String() != apiV3URL {
+		t.Errorf("V3Endpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), apiV3URL)
 	}
 	if e.EndpointPath != endpointPath {
 		t.Errorf("V3Endpoint BaseURL mismatch. Got %s. Expected %s", e.EndpointPath, endpointPath)

@@ -9,11 +9,11 @@ import (
 func TestNewUsersEndpoint(t *testing.T) {
 	testClient := NewClient("testapikey")
 	e := testClient.Users()
-	if e.BaseURL.String() != api_v1_url {
-		t.Errorf("UsersEndpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), api_v1_url)
+	if e.BaseURL.String() != apiV1URL {
+		t.Errorf("UsersEndpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), apiV1URL)
 	}
-	if e.EndpointPath != users_endpoint {
-		t.Errorf("UsersEndpoint EndpointPath mismatch. Got %s. Expected %s", e.EndpointPath, users_endpoint)
+	if e.EndpointPath != usersEndpoint {
+		t.Errorf("UsersEndpoint EndpointPath mismatch. Got %s. Expected %s", e.EndpointPath, usersEndpoint)
 	}
 }
 
@@ -52,7 +52,7 @@ func TestNewUser(t *testing.T) {
 		Restricted: false,
 		// TODO: Fix this
 		// SharedDimensionFilterSetIds: [0,1],
-		DefaultDimensionFilterId: 1,
+		DefaultDimensionFilterID: 1,
 	}
 	testClient := NewClient("testapikey")
 	e := testClient.Users()
@@ -67,14 +67,14 @@ func TestUpdateUser(t *testing.T) {
 	testServer := testRequest(t, "PUT", "/api/1/users/1", nil)
 	defer testServer.Close()
 	user := &User{
-		Id: 1,
+		ID: 1,
 		Email: "test.name@test.com.test",
 		FullName: "Test Name",
 		Role: "test_role",
 		Restricted: false,
 		// TODO: Fix this
 		// SharedDimensionFilterSetIds: [0,1],
-		DefaultDimensionFilterId: 1,
+		DefaultDimensionFilterID: 1,
 	}
 	testClient := NewClient("testapikey")
 	e := testClient.Users()

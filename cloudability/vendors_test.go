@@ -8,11 +8,11 @@ import (
 func TestNewVendorsEndpoint(t *testing.T) {
 	testClient := NewClient("testapikey")
 	e := testClient.Vendors()
-	if e.BaseURL.String() != api_v3_url {
-		t.Errorf("VendorsEndpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), api_v3_url)
+	if e.BaseURL.String() != apiV3URL {
+		t.Errorf("VendorsEndpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), apiV3URL)
 	}
-	if e.EndpointPath != vendors_endpoint {
-		t.Errorf("VendorssEndpoint EndpointPath mismatch. Got %s. Expected %s", e.EndpointPath, vendors_endpoint)
+	if e.EndpointPath != vendorsEndpoint {
+		t.Errorf("VendorssEndpoint EndpointPath mismatch. Got %s. Expected %s", e.EndpointPath, vendorsEndpoint)
 	}
 }
 
@@ -75,7 +75,7 @@ func TestNewLinkedAccount(t *testing.T) {
 	e := testClient.Vendors()
 	e.BaseURL, _ = url.Parse(testServer.URL)
 	_, err := e.NewLinkedAccount("aws", &NewLinkedAccountParams{
-		VendorAccountId: "123456789012", 
+		VendorAccountID: "123456789012", 
 		Type: "aws_role",
 	})
 	if err != nil{
@@ -98,7 +98,7 @@ func TestNewMasterAccount(t *testing.T) {
 	prefix = "CostAndUsageReports"
 	_, err := e.NewMasterAccount("aws", &NewMasterAccountParams{
 		NewLinkedAccountParams: &NewLinkedAccountParams{
-			VendorAccountId: "123456789012", 
+			VendorAccountID: "123456789012", 
 			Type: "aws_role",
 		},
 		BucketName: "cloudability-123456789012",
