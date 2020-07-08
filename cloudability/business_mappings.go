@@ -68,7 +68,7 @@ func (e *BusinessMappingsEndpoint) NewBusinessMapping(businessMapping *BusinessM
 // UpdateBusinessMapping - Update an existing business mapping using given index.
 func (e *BusinessMappingsEndpoint) UpdateBusinessMapping(businessMapping *BusinessMapping) error {
 	businessMappingPayload := new(businessMappingPayload)
-	jsonBusinessMapping, _ := json.Marshal(businessMappingPayload)
+	jsonBusinessMapping, _ := json.Marshal(businessMapping)
 	json.Unmarshal(jsonBusinessMapping, businessMappingPayload)
 	return e.put(e, strconv.Itoa(businessMapping.Index), businessMappingPayload)
 }
