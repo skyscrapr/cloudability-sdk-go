@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-const vendorsEndpoint = "/v3/vendors/"
+const vendorsEndpoint = "/vendors/"
 
 // VendorsEndpoint - Cloudabiity Vendors Endpoint
 type VendorsEndpoint struct {

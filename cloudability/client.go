@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	apiV1URL = "https://app.cloudability.com"
-	apiV3URL = "https://api.cloudability.com"
+	apiV1URL = "https://app.cloudability.com/api/1"
+	apiV3URL = "https://api.cloudability.com/v3"
 )
 
 // Client - Cloudability client.
@@ -53,6 +53,7 @@ type errorDetail struct {
 type endpointI interface {
 	buildURL(endpoint string) *url.URL
 	newRequest(method string, u *url.URL, body interface{}) (*http.Request, error)
+	doRequest(req *http.Request, result interface{}) (*http.Response, error)
 }
 
 type endpoint struct {
@@ -121,7 +122,8 @@ func (c *Client) do(e endpointI, method string, path string, body interface{}, r
 	if err != nil {
 		return err
 	}
-	_, err = c.doRequest(req, result)
+	resp, err := e.doRequest(req, result)
+	defer resp.Body.Close()
 	return err
 }
 
@@ -130,7 +132,6 @@ func (c *Client) doRequest(req *http.Request, result interface{}) (*http.Respons
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 	if !(resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated) {
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {

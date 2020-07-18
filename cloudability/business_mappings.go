@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 )
 
-const businessMappingsEndpoint = "/v3/business-mappings/"
+const businessMappingsEndpoint = "/business-mappings/"
 
 // BusinessMappingsEndpoint - Cloudability BusinessMappingsEndpoint
 type BusinessMappingsEndpoint struct {
