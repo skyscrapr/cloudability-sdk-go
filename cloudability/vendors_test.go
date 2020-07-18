@@ -17,31 +17,57 @@ func TestNewVendorsEndpoint(t *testing.T) {
 }
 
 func TestGetVendors(t *testing.T) {
-	testServer := testRequest(t, "GET", "/v3/vendors", nil)
+	expectedVendors := []Vendor{
+		{
+			Key: "aws",
+			Label: "aws",
+			Description: "aws",
+		},
+		{
+			Key: "azure",
+			Label: "azure",
+			Description: "azure",
+		},
+	}
+	testServer := testV3API(t, "GET", "/vendors", expectedVendors)
 	defer testServer.Close()
-	testClient := NewClient("testapikey")
+	testClient := testClient(t, testServer)
 	e := testClient.Vendors()
-	e.BaseURL, _ = url.Parse(testServer.URL)
-	_, err := e.GetVendors()
+	vendors, err := e.GetVendors()
 	if err != nil{
+		t.Errorf("Unexpected Errro: %s", err)
+	}
+	if vendors == nil{
 		t.Fail()
 	}
+	testCheckStructEqual(t, vendors, expectedVendors)
 }
 
 func TestGetAccounts(t *testing.T) {
-	testServer := testRequest(t, "GET", "/v3/vendors/aws/accounts", nil)
+	expectedAccounts := []Account{
+		{
+			ID: "1",
+			VendorAccountName: "Account1",
+			VendorAccountID: "1",
+			VendorKey: "aws",
+		},
+	}
+	testServer := testV3API(t, "GET", "/vendors/aws/accounts", &expectedAccounts)
 	defer testServer.Close()
-	testClient := NewClient("testapikey")
+	testClient := testClient(t, testServer)
 	e := testClient.Vendors()
-	e.BaseURL, _ = url.Parse(testServer.URL)
-	_, err := e.GetAccounts("aws")
+	accounts, err := e.GetAccounts("aws")
 	if err != nil{
 		t.Fail()
 	}
+	if accounts == nil{
+		t.Fail()
+	}
+	testCheckStructEqual(t, accounts, expectedAccounts)
 }
 
 func TestGetAccount(t *testing.T) {
-	testServer := testRequest(t, "GET", "/v3/vendors/aws/accounts/123456789012", nil)
+	testServer := testV1API(t, "GET", "/vendors/aws/accounts/123456789012", nil)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.Vendors()
@@ -53,7 +79,7 @@ func TestGetAccount(t *testing.T) {
 }
 
 func TestVerifyAccount(t *testing.T) {
-	testServer := testRequest(t, "POST", "/v3/vendors/aws/accounts/123456789012/verification", nil)
+	testServer := testV1API(t, "POST", "/vendors/aws/accounts/123456789012/verification", nil)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.Vendors()
@@ -69,7 +95,7 @@ func TestNewLinkedAccount(t *testing.T) {
 		"vendorAccountId": "123456789012",
 		"type": "aws_role",
 	}
-	testServer := testRequest(t, "POST", "/v3/vendors/aws/accounts", expectedBody)
+	testServer := testV1API(t, "POST", "/vendors/aws/accounts", expectedBody)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.Vendors()
@@ -88,7 +114,7 @@ func TestNewMasterAccount(t *testing.T) {
 		"vendorAccountId": "123456789012",
 		"type": "aws_role",
 	}
-	testServer := testRequest(t, "POST", "/v3/vendors/aws/accounts", expectedBody)
+	testServer := testV1API(t, "POST", "/vendors/aws/accounts", expectedBody)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.Vendors()
@@ -113,7 +139,7 @@ func TestNewMasterAccount(t *testing.T) {
 }
 
 func TestDeleteAccount(t *testing.T) {
-	testServer := testRequest(t, "DELETE", "/v3/vendors/aws/accounts/123456789012", nil)
+	testServer := testV1API(t, "DELETE", "/vendors/aws/accounts/123456789012", nil)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.Vendors()

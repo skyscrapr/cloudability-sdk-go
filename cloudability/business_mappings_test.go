@@ -18,7 +18,7 @@ func TestNewBusinessMappingsEndpoint(t *testing.T) {
 }
 
 func TestGetBusinessMappings(t *testing.T) {
-	testServer := testRequest(t, "GET", "/v3/business-mappings", nil)
+	testServer := testV1API(t, "GET", "/business-mappings", nil)
 	defer testServer.Close()
 
 	testClient := NewClient("testapikey")
@@ -31,7 +31,7 @@ func TestGetBusinessMappings(t *testing.T) {
 }
 
 func TestGetBusinessMapping(t *testing.T) {
-	testServer := testRequest(t, "GET", "/v3/business-mappings/1", nil)
+	testServer := testV1API(t, "GET", "/business-mappings/1", nil)
 	defer testServer.Close()
 
 	testClient := NewClient("testapikey")
@@ -50,7 +50,7 @@ func TestNewBusinessMapping(t *testing.T) {
 		DefaultValue: "test-default-value",
 		// Statements: [], 
 	}
-	testServer := testRequest(t, "POST", "/v3/business-mappings", businessMapping)
+	testServer := testV1API(t, "POST", "/business-mappings", businessMapping)
 	defer testServer.Close()
 
 	testClient := NewClient("testapikey")
@@ -70,7 +70,7 @@ func TestUpdateBusinessMapping(t *testing.T) {
 		DefaultValue: "test-default-value",
 		// Statements: [], 
 	}
-	testServer := testRequest(t, "PUT", "/v3/business-mappings/1", businessMapping)
+	testServer := testV1API(t, "PUT", "/business-mappings/1", businessMapping)
 	defer testServer.Close()
 
 	testClient := NewClient("testapikey")
@@ -83,7 +83,7 @@ func TestUpdateBusinessMapping(t *testing.T) {
 }
 
 func TestDeleteBusinessMapping(t *testing.T) {
-	testServer := testRequest(t, "DELETE", "/v3/business-mappings/1", nil)
+	testServer := testV1API(t, "DELETE", "/business-mappings/1", nil)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.BusinessMappings()

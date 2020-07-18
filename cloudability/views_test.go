@@ -17,7 +17,7 @@ func TestNewViewsEndpoint(t *testing.T) {
 }
 
 func TestGetViews(t *testing.T) {
-	testServer := testRequest(t, "GET", "/v3/views", nil)
+	testServer := testV1API(t, "GET", "/views", nil)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.Views()
@@ -29,7 +29,7 @@ func TestGetViews(t *testing.T) {
 }
 
 func TestGetView(t *testing.T) {
-	testServer := testRequest(t, "GET", "/v3/views/1", nil)
+	testServer := testV1API(t, "GET", "/views/1", nil)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.Views()
@@ -45,7 +45,7 @@ func TestNewView(t *testing.T) {
 		ID: "1",
 
 	}
-	testServer := testRequest(t, "POST", "/v3/views", view)
+	testServer := testV1API(t, "POST", "/views", view)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.Views()
@@ -57,7 +57,7 @@ func TestNewView(t *testing.T) {
 }
 
 func TestUpdateView(t *testing.T) {
-	testServer := testRequest(t, "PUT", "/v3/views/1", nil)
+	testServer := testV1API(t, "PUT", "/views/1", nil)
 	defer testServer.Close()
 	view := &View{
 		ID: "1",
@@ -74,7 +74,7 @@ func TestUpdateView(t *testing.T) {
 }
 
 func TestDeleteView(t *testing.T) {
-	testServer := testRequest(t, "DELETE", "/v3/views/1", nil)
+	testServer := testV1API(t, "DELETE", "/views/1", nil)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.Views()

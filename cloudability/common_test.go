@@ -1,13 +1,17 @@
 package cloudability
 
 import (
-	"testing"
+	"bytes"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"testing"
+	"reflect"
 )
 
 
-func testRequest(t *testing.T, method string, path string, body interface{}) *httptest.Server {
+func testV1API(t *testing.T, method string, path string, body interface{}) *httptest.Server {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		if req.Method != method {
 			t.Errorf("Expected request method ‘%s’, got ‘%s’", method, req.Method)
@@ -15,17 +19,60 @@ func testRequest(t *testing.T, method string, path string, body interface{}) *ht
 		if req.URL.Path != path {
 			t.Errorf("Expected request to ‘%s’, got ‘%s’", path, req.URL.Path)
 		}
-		// TODO: Fix this
-		// if body != nil {
-		// 	jsonReq, err := simplejson.NewFromReader(req.Body)
-    	// 	if err != nil {
-      	// 		t.Errorf("Error while reading request JSON: %s", err)
-    	// 	}
-		// 	if !reflect.DeepEqual(jsonReq, req.Body) {
-		// 		t.Errorf("Expected body ‘%s’, got ‘%s’", body, req.Body)
-		// 	}
-		// }
-		rw.Write([]byte(`{}`))
+		if body != nil {
+			buf := new(bytes.Buffer)
+			err := json.NewEncoder(buf).Encode(body)
+			if err != nil {
+				t.Errorf("Error converting body into JSON: %s", err)
+			}
+			rw.Write(buf.Bytes())
+		} else {
+			// TODO: Fix this. I don't think it's right
+			rw.Write([]byte(`{}`))
+		}
 	}))
 	return server
+}
+
+
+func testV3API(t *testing.T, method string, path string, body interface{}) *httptest.Server {
+	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		if req.Method != method {
+			t.Errorf("Expected request method ‘%s’, got ‘%s’", method, req.Method)
+		}
+		if req.URL.Path != path {
+			t.Errorf("Expected request to ‘%s’, got ‘%s’", path, req.URL.Path)
+		}
+		if body != nil {
+			result := v3ResultTemplate{
+				Result: body,
+			}
+			buf := new(bytes.Buffer)
+			err := json.NewEncoder(buf).Encode(result)
+			if err != nil {
+				t.Errorf("Error converting body into JSON: %s", err)
+			}
+			rw.Write(buf.Bytes())
+		}
+	}))
+	return server
+}
+
+func testClient(t *testing.T, s *httptest.Server) *Client {
+	client := NewClient("testapikey")
+	u, err := url.Parse(s.URL)
+	if err != nil {
+		t.Fail()
+	}
+	client.V1BaseURL = u
+	client.V3BaseURL = u
+	return client
+}
+
+func testCheckStructEqual(t *testing.T, got interface{}, expected interface{}) {
+	if !reflect.DeepEqual(got, expected) {
+		sgot, _ := json.MarshalIndent(got, "", "\t")
+		sexpected, _ := json.MarshalIndent(expected, "", "\t")
+		t.Errorf("Expected '%s', got '%s'", sexpected, sgot)
+	}
 }

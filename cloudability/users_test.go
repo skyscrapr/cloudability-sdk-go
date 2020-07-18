@@ -1,8 +1,10 @@
 package cloudability
 
 import (
+	"reflect"
 	"testing"
 	"net/url"
+	"encoding/json"
 )
 
 
@@ -17,33 +19,59 @@ func TestNewUsersEndpoint(t *testing.T) {
 	}
 }
 
-
 func TestGetUsers(t *testing.T) {
-	testServer := testRequest(t, "GET", "/api/1/users", nil)
+	expectedUsers := []User{
+		{
+			ID: 1,
+			Email: "1@test",
+			FullName: "1 Test",
+		},
+	}
+	testServer := testV1API(t, "GET", "/users", &expectedUsers)
 	defer testServer.Close()
-	testClient := NewClient("testapikey")
+	testClient := testClient(t, testServer)
 	e := testClient.Users()
-	e.BaseURL, _ = url.Parse(testServer.URL)
-	_, err := e.GetUsers()
+	users, err := e.GetUsers()
 	if err != nil{
 		t.Fail()
+	}
+	if users == nil{
+		t.Fail()
+	}
+	if !reflect.DeepEqual(users, expectedUsers) {
+		susers, _ := json.MarshalIndent(users, "", "\t")
+		sexpectedUsers, _ := json.MarshalIndent(expectedUsers, "", "\t")
+		t.Errorf("Expected user '%s', got '%s'", sexpectedUsers, susers)
 	}
 }
 
 func TestGetUser(t *testing.T) {
-	testServer := testRequest(t, "GET", "/api/1/users/1", nil)
+	expectedUser := &User{
+		ID: 1,
+		Email: "1@test",
+		FullName: "1 Test",
+	}
+	testServer := testV1API(t, "GET", "/users/1", &expectedUser)
 	defer testServer.Close()
-	testClient := NewClient("testapikey")
+	testClient := testClient(t, testServer)
 	e := testClient.Users()
-	e.BaseURL, _ = url.Parse(testServer.URL)
-	_, err := e.GetUser(1)
+	user, err := e.GetUser(1)
 	if err != nil{
 		t.Fail()
 	}
+	if user == nil{
+		t.Fail()
+	}
+	if !reflect.DeepEqual(user, expectedUser) {
+		suser, _ := json.MarshalIndent(user, "", "\t")
+		sexpectedUser, _ := json.MarshalIndent(expectedUser, "", "\t")
+		t.Errorf("Expected user '%s', got '%s'", sexpectedUser, suser)
+	}
 }
 
+
 func TestNewUser(t *testing.T) {
-	testServer := testRequest(t, "POST", "/api/1/users", nil)
+	testServer := testV1API(t, "POST", "/users", nil)
 	defer testServer.Close()
 	user := &User{
 		Email: "test.name@test.com.test",
@@ -64,7 +92,7 @@ func TestNewUser(t *testing.T) {
 }
 
 func TestUpdateUser(t *testing.T) {
-	testServer := testRequest(t, "PUT", "/api/1/users/1", nil)
+	testServer := testV1API(t, "PUT", "/users/1", nil)
 	defer testServer.Close()
 	user := &User{
 		ID: 1,
@@ -86,7 +114,7 @@ func TestUpdateUser(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
-	testServer := testRequest(t, "DELETE", "/api/1/users/1", nil)
+	testServer := testV1API(t, "DELETE", "/users/1", nil)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.Users()

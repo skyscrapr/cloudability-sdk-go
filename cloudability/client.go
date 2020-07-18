@@ -1,4 +1,4 @@
-// Cloudability package provides a client for the cloudability api.
+// Package cloudability provides a client for the cloudability api.
 package cloudability
 
 import (
@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	apiV1URL = "https://app.cloudability.com"
-	apiV3URL = "https://api.cloudability.com"
+	apiV1URL = "https://app.cloudability.com/api/1"
+	apiV3URL = "https://api.cloudability.com/v3"
 )
 
 // Client - Cloudability client.
@@ -24,7 +24,6 @@ type Client struct {
 	*http.Client
 	V1BaseURL	 *url.URL
 	V3BaseURL	 *url.URL
-	// BaseURL      *url.URL
 	UserAgent    string
 	apikey       string
 }
@@ -54,6 +53,7 @@ type errorDetail struct {
 type endpointI interface {
 	buildURL(endpoint string) *url.URL
 	newRequest(method string, u *url.URL, body interface{}) (*http.Request, error)
+	doRequest(req *http.Request, result interface{}) (*http.Response, error)
 }
 
 type endpoint struct {
@@ -92,16 +92,11 @@ func (e* endpoint) buildURL(endpointPath string) *url.URL{
     if err != nil {
         log.Fatal(err)
 	}
-	// base, err := url.Parse("http://example.com/directory/")
-    // if err != nil {
-    //     log.Fatal(err)
-    // }
-	// fmt.Println(base.ResolveReference(u))
 	u.Path = path.Join(e.EndpointPath, u.Path)
 	return e.BaseURL.ResolveReference(u)
 }
 
-type resultTemplate struct {
+type v3ResultTemplate struct {
 	Result interface{} `json:"result"`
 }
 
@@ -127,7 +122,8 @@ func (c *Client) do(e endpointI, method string, path string, body interface{}, r
 	if err != nil {
 		return err
 	}
-	_, err = c.doRequest(req, result)
+	resp, err := e.doRequest(req, result)
+	defer resp.Body.Close()
 	return err
 }
 
@@ -136,7 +132,6 @@ func (c *Client) doRequest(req *http.Request, result interface{}) (*http.Respons
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 	if !(resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated) {
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
@@ -144,8 +139,24 @@ func (c *Client) doRequest(req *http.Request, result interface{}) (*http.Respons
 		}
 		return nil, errors.New(string(bodyBytes))
 	}
+	return resp, nil
+}
+
+func (e *v1Endpoint) doRequest(req *http.Request, result interface{}) (*http.Response, error) {
+	resp, err := e.Client.doRequest(req, result)
 	if result != nil {
-		resultTemplate := &resultTemplate{
+		err = json.NewDecoder(resp.Body).Decode(result)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	return resp, err
+}
+
+func (e *v3Endpoint) doRequest(req *http.Request, result interface{}) (*http.Response, error) {
+	resp, err := e.Client.doRequest(req, result)
+	if result != nil {
+		resultTemplate := &v3ResultTemplate{
 			Result: &result,
 		}
 		err = json.NewDecoder(resp.Body).Decode(resultTemplate)
@@ -153,7 +164,7 @@ func (c *Client) doRequest(req *http.Request, result interface{}) (*http.Respons
 			log.Fatal(err)
 		}
 	}
-	return resp, nil
+	return resp, err
 }
 
 func (c *Client) newRequest(method string, u *url.URL, body interface{}) (*http.Request, error) {

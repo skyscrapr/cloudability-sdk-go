@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-const viewsEndpoint = "/v3/views/"
+const viewsEndpoint = "/views/"
 
 // ViewsEndpoint - Cloudability Views Endpoint
 type ViewsEndpoint struct {
