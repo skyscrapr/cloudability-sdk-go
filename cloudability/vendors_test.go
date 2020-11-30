@@ -114,7 +114,7 @@ func TestNewMasterAccount(t *testing.T) {
 		"vendorAccountId": "123456789012",
 		"type": "aws_role",
 	}
-	testServer := testV1API(t, "POST", "/vendors/aws/accounts", expectedBody)
+	testServer := testV3API(t, "POST", "/vendors/aws/accounts", expectedBody)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.Vendors()

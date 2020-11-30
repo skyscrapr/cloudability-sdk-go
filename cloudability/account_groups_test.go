@@ -104,7 +104,7 @@ func TestUpdateAccountGroup(t *testing.T) {
 	testServer := testV1API(t, "PUT", "/account_groups/1", nil)
 	defer testServer.Close()
 	accountGroup := &AccountGroup{
-		ID: 1,
+		ID: 1,         
 		Name: "more purple",
 	}
 	testClient := NewClient("testapikey")
