@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 )
 
-const accountGroupsEndpoint = "/account_groups/"
+const accountGroupsEndpoint = "account_groups/"
 
 // AccountGroupsEndpoint - Cloudability Account Groups Endpoint
 type AccountGroupsEndpoint struct {

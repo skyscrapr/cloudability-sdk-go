@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 )
 
-const usersEndpoint = "/users/"
+const usersEndpoint = "users/"
 
 // UsersEndpoint - Cloudability Users Endpoint
 type UsersEndpoint struct {
