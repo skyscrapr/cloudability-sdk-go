@@ -4,6 +4,7 @@ package cloudability
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io"
 	"io/ioutil"
 	"log"
@@ -11,7 +12,6 @@ import (
 	"net/url"
 	"path"
 	"time"
-	"errors"
 )
 
 const (
@@ -22,10 +22,10 @@ const (
 // Client - Cloudability client.
 type Client struct {
 	*http.Client
-	V1BaseURL	 *url.URL
-	V3BaseURL	 *url.URL
-	UserAgent    string
-	apikey       string
+	V1BaseURL *url.URL
+	V3BaseURL *url.URL
+	UserAgent string
+	apikey    string
 }
 
 // NewClient - This constructor creates a Cloudability client.
@@ -46,7 +46,7 @@ type APIError struct {
 }
 
 type errorDetail struct {
-	Code float64 `json:"code"`
+	Code     float64  `json:"code"`
 	Messages []string `json:"messages"`
 }
 
@@ -58,7 +58,7 @@ type endpointI interface {
 
 type endpoint struct {
 	*Client
-	BaseURL *url.URL
+	BaseURL      *url.URL
 	EndpointPath string
 }
 
@@ -72,8 +72,8 @@ type v3Endpoint struct {
 
 func newEndpoint(c *Client, baseURL *url.URL, endpointPath string) *endpoint {
 	e := &endpoint{
-		Client: c,
-		BaseURL: baseURL,
+		Client:       c,
+		BaseURL:      baseURL,
 		EndpointPath: endpointPath,
 	}
 	return e
@@ -87,12 +87,13 @@ func newV3Endpoint(c *Client, endpointPath string) *v3Endpoint {
 	return &v3Endpoint{newEndpoint(c, c.V3BaseURL, endpointPath)}
 }
 
-func (e* endpoint) buildURL(endpointPath string) *url.URL{
+func (e *endpoint) buildURL(endpointPath string) *url.URL {
 	u, err := url.Parse(endpointPath)
-    if err != nil {
-        log.Fatal(err)
+	if err != nil {
+		log.Fatal(err)
 	}
 	u.Path = path.Join(e.EndpointPath, u.Path)
+	u.Path = path.Join(e.BaseURL.Path, u.Path)
 	return e.BaseURL.ResolveReference(u)
 }
 
@@ -123,7 +124,9 @@ func (c *Client) do(e endpointI, method string, path string, body interface{}, r
 		return err
 	}
 	resp, err := e.doRequest(req, result)
-	defer resp.Body.Close()
+	if err == nil {
+		defer resp.Body.Close()
+	}
 	return err
 }
 
@@ -155,6 +158,9 @@ func (e *v1Endpoint) doRequest(req *http.Request, result interface{}) (*http.Res
 
 func (e *v3Endpoint) doRequest(req *http.Request, result interface{}) (*http.Response, error) {
 	resp, err := e.Client.doRequest(req, result)
+	if err != nil {
+		return resp, err
+	}
 	if result != nil {
 		resultTemplate := &v3ResultTemplate{
 			Result: &result,
