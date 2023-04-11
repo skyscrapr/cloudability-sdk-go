@@ -7,10 +7,27 @@ import (
 )
 
 func TestNewClient(t *testing.T) {
-	duration := 10 * time.Second
+	duration := 30 * time.Second
 	userAgent := "cloudability-sdk-go"
 	apikey := "testapikey"
 	testClient := NewClient(apikey)
+	if testClient.Client.Timeout != duration {
+		t.Errorf("HTTP client timeout mismatch. Got %s. Expected %s", testClient.Client.Timeout, duration)
+	}
+	if testClient.UserAgent != userAgent {
+		t.Errorf("Cloudability client useragent mismatch. Got %s. Expected %s", testClient.UserAgent, userAgent)
+	}
+	if testClient.apikey != apikey {
+		t.Errorf("Cloudability client apikey mismatch. Got %s. Expected %s", testClient.apikey, apikey)
+	}
+}
+
+func TestSetTimeout(t *testing.T) {
+	duration := 60 * time.Second
+	userAgent := "cloudability-sdk-go"
+	apikey := "testapikey"
+	testClient := NewClient(apikey)
+	testClient.SetTimeout(duration)
 	if testClient.Client.Timeout != duration {
 		t.Errorf("HTTP client timeout mismatch. Got %s. Expected %s", testClient.Client.Timeout, duration)
 	}

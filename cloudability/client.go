@@ -31,7 +31,7 @@ type Client struct {
 // NewClient - This constructor creates a Cloudability client.
 func NewClient(apikey string) *Client {
 	c := &Client{
-		Client:    &http.Client{Timeout: 10 * time.Second},
+		Client:    &http.Client{Timeout: 30 * time.Second},
 		UserAgent: "cloudability-sdk-go",
 		apikey:    apikey,
 	}
@@ -46,7 +46,8 @@ type APIError struct {
 }
 
 type errorDetail struct {
-	Code     float64  `json:"code"`
+	Status   float64  `json:"status"`
+	Code     []string `json:"code"`
 	Messages []string `json:"messages"`
 }
 
@@ -68,6 +69,10 @@ type v1Endpoint struct {
 
 type v3Endpoint struct {
 	*endpoint
+}
+
+func (c *Client) SetTimeout(d time.Duration) {
+	c.Timeout = d
 }
 
 func newEndpoint(c *Client, baseURL *url.URL, endpointPath string) *endpoint {
