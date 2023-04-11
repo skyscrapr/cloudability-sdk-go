@@ -71,8 +71,8 @@ type v3Endpoint struct {
 	*endpoint
 }
 
-func SetTimeout(c *Client, t time.Duration) {
-	c.Timeout = t
+func (c *Client) SetTimeout(d time.Duration) {
+	c.Timeout = d
 }
 
 func newEndpoint(c *Client, baseURL *url.URL, endpointPath string) *endpoint {
