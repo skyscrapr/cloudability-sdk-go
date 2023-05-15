@@ -1,9 +1,9 @@
 package cloudability
 
 import (
+	"net/url"
 	"testing"
 	"time"
-	"net/url"
 )
 
 func TestNewClient(t *testing.T) {
@@ -50,7 +50,7 @@ func TestNewEndpoint(t *testing.T) {
 	}
 	if e.EndpointPath != endpointPath {
 		t.Errorf("Endpoint BaseURL mismatch. Got %s. Expected %s", e.EndpointPath, endpointPath)
-	} 
+	}
 }
 
 func TestNewV1Endpoint(t *testing.T) {
@@ -63,7 +63,7 @@ func TestNewV1Endpoint(t *testing.T) {
 	}
 	if e.EndpointPath != endpointPath {
 		t.Errorf("V3Endpoint BaseURL mismatch. Got %s. Expected %s", e.EndpointPath, endpointPath)
-	} 
+	}
 }
 
 func TestNewV3Endpoint(t *testing.T) {
@@ -76,7 +76,7 @@ func TestNewV3Endpoint(t *testing.T) {
 	}
 	if e.EndpointPath != endpointPath {
 		t.Errorf("V3Endpoint BaseURL mismatch. Got %s. Expected %s", e.EndpointPath, endpointPath)
-	} 
+	}
 }
 
 func TestV3NewRequest(t *testing.T) {

@@ -1,8 +1,8 @@
 package cloudability
 
 import (
-	"strconv"
 	"encoding/json"
+	"strconv"
 )
 
 const businessMappingsEndpoint = "/business-mappings/"
@@ -25,20 +25,20 @@ type BusinessMappingStatement struct {
 
 // BusinessMapping - Cloudability BusinessMapping
 type BusinessMapping struct {
-	Index int `json:"index"`
-	Kind string `json:"kind"`
-	Name string `json:"name"`
-	DefaultValue string `json:"defaultValue"`
-	Statements []*BusinessMappingStatement `json:"statements"`
-	UpdatedAt string
+	Index        int                         `json:"index"`
+	Kind         string                      `json:"kind"`
+	Name         string                      `json:"name"`
+	DefaultValue string                      `json:"defaultValue"`
+	Statements   []*BusinessMappingStatement `json:"statements"`
+	UpdatedAt    string
 }
 
 type businessMappingPayload struct {
-	Kind string `json:"kind"`
-	Name string `json:"name"`
-	DefaultValue string `json:"defaultValue"`
-	Statements []*BusinessMappingStatement `json:"statements"`
-	UpdatedAt string
+	Kind         string                      `json:"kind"`
+	Name         string                      `json:"name"`
+	DefaultValue string                      `json:"defaultValue"`
+	Statements   []*BusinessMappingStatement `json:"statements"`
+	UpdatedAt    string
 }
 
 // GetBusinessMappings - Get a list of all existing business mappings.

@@ -18,19 +18,19 @@ func (c *Client) Views() *ViewsEndpoint {
 
 // ViewFilter - Cloudability ViewFilter
 type ViewFilter struct {
-	Field string `json:"field"`
+	Field      string `json:"field"`
 	Comparator string `json:"comparator"`
-	Value string `json:"value"`
+	Value      string `json:"value"`
 }
 
 // View - Cloudabiity View
 type View struct {
-	ID string `json:"id"`
-	Title string `json:"title"`
-	SharedWithUsers []string `json:"sharedWithUsers"`
-	SharedWithOrganization bool `json:"sharedWithOrganization"`
-	OwnerID string `json:"ownerId"`
-	Filters []*ViewFilter `json:"filters"`
+	ID                     string        `json:"id"`
+	Title                  string        `json:"title"`
+	SharedWithUsers        []string      `json:"sharedWithUsers"`
+	SharedWithOrganization bool          `json:"sharedWithOrganization"`
+	OwnerID                string        `json:"ownerId"`
+	Filters                []*ViewFilter `json:"filters"`
 }
 
 // GetViews - returns all views
@@ -48,10 +48,10 @@ func (e ViewsEndpoint) GetView(id string) (*View, error) {
 }
 
 type viewPayload struct {
-	Title string `json:"title"`
-	SharedWithUsers []string `json:"sharedWithUsers"`
-	SharedWithOrganization bool `json:"sharedWithOrganization"`
-	Filters []ViewFilter `json:"filters"`
+	Title                  string       `json:"title"`
+	SharedWithUsers        []string     `json:"sharedWithUsers"`
+	SharedWithOrganization bool         `json:"sharedWithOrganization"`
+	Filters                []ViewFilter `json:"filters"`
 }
 
 // NewView - create a new view
@@ -68,7 +68,7 @@ func (e *ViewsEndpoint) NewView(view *View) (*View, error) {
 func (e *ViewsEndpoint) UpdateView(view *View) error {
 	viewPayload := new(viewPayload)
 	jsonView, _ := json.Marshal(view)
-    json.Unmarshal(jsonView, viewPayload)
+	json.Unmarshal(jsonView, viewPayload)
 	return e.put(e, view.ID, viewPayload)
 }
 

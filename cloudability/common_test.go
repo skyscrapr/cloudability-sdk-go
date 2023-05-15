@@ -6,10 +6,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"testing"
 	"reflect"
+	"testing"
 )
-
 
 func testV1API(t *testing.T, method string, path string, body interface{}) *httptest.Server {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
@@ -33,7 +32,6 @@ func testV1API(t *testing.T, method string, path string, body interface{}) *http
 	}))
 	return server
 }
-
 
 func testV3API(t *testing.T, method string, path string, body interface{}) *httptest.Server {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {

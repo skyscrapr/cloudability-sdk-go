@@ -1,12 +1,11 @@
 package cloudability
 
 import (
+	"encoding/json"
+	"net/url"
 	"reflect"
 	"testing"
-	"net/url"
-	"encoding/json"
 )
-
 
 func TestNewUsersEndpoint(t *testing.T) {
 	testClient := NewClient("testapikey")
@@ -22,8 +21,8 @@ func TestNewUsersEndpoint(t *testing.T) {
 func TestGetUsers(t *testing.T) {
 	expectedUsers := []User{
 		{
-			ID: 1,
-			Email: "1@test",
+			ID:       1,
+			Email:    "1@test",
 			FullName: "1 Test",
 		},
 	}
@@ -32,10 +31,10 @@ func TestGetUsers(t *testing.T) {
 	testClient := testClient(t, testServer)
 	e := testClient.Users()
 	users, err := e.GetUsers()
-	if err != nil{
+	if err != nil {
 		t.Fail()
 	}
-	if users == nil{
+	if users == nil {
 		t.Fail()
 	}
 	if !reflect.DeepEqual(users, expectedUsers) {
@@ -47,8 +46,8 @@ func TestGetUsers(t *testing.T) {
 
 func TestGetUser(t *testing.T) {
 	expectedUser := &User{
-		ID: 1,
-		Email: "1@test",
+		ID:       1,
+		Email:    "1@test",
 		FullName: "1 Test",
 	}
 	testServer := testV1API(t, "GET", "/users/1", &expectedUser)
@@ -56,10 +55,10 @@ func TestGetUser(t *testing.T) {
 	testClient := testClient(t, testServer)
 	e := testClient.Users()
 	user, err := e.GetUser(1)
-	if err != nil{
+	if err != nil {
 		t.Fail()
 	}
-	if user == nil{
+	if user == nil {
 		t.Fail()
 	}
 	if !reflect.DeepEqual(user, expectedUser) {
@@ -69,14 +68,13 @@ func TestGetUser(t *testing.T) {
 	}
 }
 
-
 func TestNewUser(t *testing.T) {
 	testServer := testV1API(t, "POST", "/users", nil)
 	defer testServer.Close()
 	user := &User{
-		Email: "test.name@test.com.test",
-		FullName: "Test Name",
-		Role: "test_role",
+		Email:      "test.name@test.com.test",
+		FullName:   "Test Name",
+		Role:       "test_role",
 		Restricted: false,
 		// TODO: Fix this
 		// SharedDimensionFilterSetIds: [0,1],
@@ -86,7 +84,7 @@ func TestNewUser(t *testing.T) {
 	e := testClient.Users()
 	e.BaseURL, _ = url.Parse(testServer.URL)
 	err := e.NewUser(user)
-	if err != nil{
+	if err != nil {
 		t.Fail()
 	}
 }
@@ -95,10 +93,10 @@ func TestUpdateUser(t *testing.T) {
 	testServer := testV1API(t, "PUT", "/users/1", nil)
 	defer testServer.Close()
 	user := &User{
-		ID: 1,
-		Email: "test.name@test.com.test",
-		FullName: "Test Name",
-		Role: "test_role",
+		ID:         1,
+		Email:      "test.name@test.com.test",
+		FullName:   "Test Name",
+		Role:       "test_role",
 		Restricted: false,
 		// TODO: Fix this
 		// SharedDimensionFilterSetIds: [0,1],
@@ -108,7 +106,7 @@ func TestUpdateUser(t *testing.T) {
 	e := testClient.Users()
 	e.BaseURL, _ = url.Parse(testServer.URL)
 	err := e.UpdateUser(user)
-	if err != nil{
+	if err != nil {
 		t.Fail()
 	}
 }
@@ -120,7 +118,7 @@ func TestDeleteUser(t *testing.T) {
 	e := testClient.Users()
 	e.BaseURL, _ = url.Parse(testServer.URL)
 	err := e.DeleteUser(1)
-	if err != nil{
+	if err != nil {
 		t.Fail()
 	}
 }

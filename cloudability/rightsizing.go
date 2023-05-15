@@ -18,10 +18,10 @@ func (c *Client) Rightsizing() *RightsizingEndpoint {
 
 // Resource Cloudability Rightsizing Resource
 type Resource struct {
-	Vendor string `json:"vendor"`
-	Service string `json:"service"`
-	ResourceIdentifier string `json:"resourceIdentifier"`
-	Recommendations []Recommendation `json:"recommendations"`
+	Vendor             string           `json:"vendor"`
+	Service            string           `json:"service"`
+	ResourceIdentifier string           `json:"resourceIdentifier"`
+	Recommendations    []Recommendation `json:"recommendations"`
 }
 
 // Recommendation Cloudability Rightsizing Resource Recommendation

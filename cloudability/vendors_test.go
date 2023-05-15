@@ -1,8 +1,8 @@
 package cloudability
 
 import (
-	"testing"
 	"net/url"
+	"testing"
 )
 
 func TestNewVendorsEndpoint(t *testing.T) {
@@ -19,13 +19,13 @@ func TestNewVendorsEndpoint(t *testing.T) {
 func TestGetVendors(t *testing.T) {
 	expectedVendors := []Vendor{
 		{
-			Key: "aws",
-			Label: "aws",
+			Key:         "aws",
+			Label:       "aws",
 			Description: "aws",
 		},
 		{
-			Key: "azure",
-			Label: "azure",
+			Key:         "azure",
+			Label:       "azure",
 			Description: "azure",
 		},
 	}
@@ -34,10 +34,10 @@ func TestGetVendors(t *testing.T) {
 	testClient := testClient(t, testServer)
 	e := testClient.Vendors()
 	vendors, err := e.GetVendors()
-	if err != nil{
+	if err != nil {
 		t.Errorf("Unexpected Errro: %s", err)
 	}
-	if vendors == nil{
+	if vendors == nil {
 		t.Fail()
 	}
 	testCheckStructEqual(t, vendors, expectedVendors)
@@ -46,10 +46,10 @@ func TestGetVendors(t *testing.T) {
 func TestGetAccounts(t *testing.T) {
 	expectedAccounts := []Account{
 		{
-			ID: "1",
+			ID:                "1",
 			VendorAccountName: "Account1",
-			VendorAccountID: "1",
-			VendorKey: "aws",
+			VendorAccountID:   "1",
+			VendorKey:         "aws",
 		},
 	}
 	testServer := testV3API(t, "GET", "/vendors/aws/accounts", &expectedAccounts)
@@ -57,10 +57,10 @@ func TestGetAccounts(t *testing.T) {
 	testClient := testClient(t, testServer)
 	e := testClient.Vendors()
 	accounts, err := e.GetAccounts("aws")
-	if err != nil{
+	if err != nil {
 		t.Fail()
 	}
-	if accounts == nil{
+	if accounts == nil {
 		t.Fail()
 	}
 	testCheckStructEqual(t, accounts, expectedAccounts)
@@ -73,7 +73,7 @@ func TestGetAccount(t *testing.T) {
 	e := testClient.Vendors()
 	e.BaseURL, _ = url.Parse(testServer.URL)
 	_, err := e.GetAccount("aws", "123456789012")
-	if err != nil{
+	if err != nil {
 		t.Fail()
 	}
 }
@@ -85,7 +85,7 @@ func TestVerifyAccount(t *testing.T) {
 	e := testClient.Vendors()
 	e.BaseURL, _ = url.Parse(testServer.URL)
 	_, err := e.VerifyAccount("aws", "123456789012")
-	if err != nil{
+	if err != nil {
 		t.Fail()
 	}
 }
@@ -93,7 +93,7 @@ func TestVerifyAccount(t *testing.T) {
 func TestNewLinkedAccount(t *testing.T) {
 	expectedBody := map[string]string{
 		"vendorAccountId": "123456789012",
-		"type": "aws_role",
+		"type":            "aws_role",
 	}
 	testServer := testV1API(t, "POST", "/vendors/aws/accounts", expectedBody)
 	defer testServer.Close()
@@ -101,10 +101,10 @@ func TestNewLinkedAccount(t *testing.T) {
 	e := testClient.Vendors()
 	e.BaseURL, _ = url.Parse(testServer.URL)
 	_, err := e.NewLinkedAccount("aws", &NewLinkedAccountParams{
-		VendorAccountID: "123456789012", 
-		Type: "aws_role",
+		VendorAccountID: "123456789012",
+		Type:            "aws_role",
 	})
-	if err != nil{
+	if err != nil {
 		t.Fail()
 	}
 }
@@ -112,7 +112,7 @@ func TestNewLinkedAccount(t *testing.T) {
 func TestNewMasterAccount(t *testing.T) {
 	expectedBody := map[string]string{
 		"vendorAccountId": "123456789012",
-		"type": "aws_role",
+		"type":            "aws_role",
 	}
 	testServer := testV3API(t, "POST", "/vendors/aws/accounts", expectedBody)
 	defer testServer.Close()
@@ -124,16 +124,16 @@ func TestNewMasterAccount(t *testing.T) {
 	prefix = "CostAndUsageReports"
 	_, err := e.NewMasterAccount("aws", &NewMasterAccountParams{
 		NewLinkedAccountParams: &NewLinkedAccountParams{
-			VendorAccountID: "123456789012", 
-			Type: "aws_role",
+			VendorAccountID: "123456789012",
+			Type:            "aws_role",
 		},
 		BucketName: "cloudability-123456789012",
 		CostAndUsageReport: &CostAndUsageReport{
-			Name: name,
+			Name:   name,
 			Prefix: prefix,
 		},
 	})
-	if err != nil{
+	if err != nil {
 		t.Fail()
 	}
 }
@@ -145,7 +145,7 @@ func TestDeleteAccount(t *testing.T) {
 	e := testClient.Vendors()
 	e.BaseURL, _ = url.Parse(testServer.URL)
 	err := e.DeleteAccount("aws", "123456789012")
-	if err != nil{
+	if err != nil {
 		t.Fail()
 	}
 }

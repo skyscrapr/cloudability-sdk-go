@@ -1,8 +1,8 @@
 package cloudability
 
 import (
-	"strconv"
 	"encoding/json"
+	"strconv"
 )
 
 const accountGroupsEndpoint = "/account_groups/"
@@ -19,9 +19,9 @@ func (c *Client) AccountGroups() *AccountGroupsEndpoint {
 
 // AccountGroup - Cloudability AccountGroup
 type AccountGroup struct {
-	ID int `json:"id,omitempty"`
-	Name string `json:"name"`
-	Position int `json:"position"`
+	ID                      int      `json:"id,omitempty"`
+	Name                    string   `json:"name"`
+	Position                int      `json:"position"`
 	AccountGroupEntryValues []string `json:"account_group_entry_values,omitempty"`
 }
 
@@ -40,28 +40,28 @@ func (e *AccountGroupsEndpoint) GetAccountGroup(id int) (*AccountGroup, error) {
 }
 
 type accountGroupNewPayload struct {
-	Name string `json:"name"`
-	Position int `json:"position"`
+	Name     string `json:"name"`
+	Position int    `json:"position"`
 }
 
 // NewAccountGroup - Create an account group
 func (e *AccountGroupsEndpoint) NewAccountGroup(accountGroup *AccountGroup) error {
 	accountGroupPayload := new(accountGroupNewPayload)
 	jsonAccountGroup, _ := json.Marshal(accountGroup)
-    json.Unmarshal(jsonAccountGroup, accountGroupPayload)
+	json.Unmarshal(jsonAccountGroup, accountGroupPayload)
 	return e.post(e, "", accountGroupPayload, nil)
 }
 
 type accountGroupUpdatePayload struct {
-	Name string `json:"name"`
-	Position int `json:"position"`
+	Name     string `json:"name"`
+	Position int    `json:"position"`
 }
 
 // UpdateAccountGroup - Update an account group
 func (e *AccountGroupsEndpoint) UpdateAccountGroup(accountGroup *AccountGroup) error {
 	accountGroupPayload := new(accountGroupUpdatePayload)
 	jsonAccountGroup, _ := json.Marshal(accountGroup)
-    json.Unmarshal(jsonAccountGroup, accountGroupPayload)
+	json.Unmarshal(jsonAccountGroup, accountGroupPayload)
 	return e.put(e, strconv.Itoa(accountGroup.ID), accountGroupPayload)
 }
 
