@@ -9,23 +9,23 @@ const usersEndpoint = "/users/"
 
 // UsersEndpoint - Cloudability Users Endpoint
 type UsersEndpoint struct {
-	*v1Endpoint
+	*v3Endpoint
 }
 
 // Users - Cloudability Users Endpoint
 func (c *Client) Users() *UsersEndpoint {
-	return &UsersEndpoint{newV1Endpoint(c, usersEndpoint)}
+	return &UsersEndpoint{newV3Endpoint(c, usersEndpoint)}
 }
 
 // User - Cloudability User
 type User struct {
-	ID                          int    `json:"id,omitempty"`
+	ID                          int    `json:"id"`
+	FrontdoorUserId             string `json:"frontdoor_user_id"`
+	FrontdoorLogin              string `json:"frontdoor_login"`
 	Email                       string `json:"email"`
 	FullName                    string `json:"full_name"`
-	Role                        string `json:"role"`
-	Restricted                  bool   `json:"restricted"`
+	DefaultDimensionFilterSetID int    `json:"default_dimension_filter_set_id"`
 	SharedDimensionFilterSetIDs []int  `json:"shared_dimension_filter_set_ids"`
-	DefaultDimensionFilterID    int    `json:"default_dimension_filer_set_id"`
 }
 
 // GetUsers - Get all users
@@ -42,41 +42,15 @@ func (e *UsersEndpoint) GetUser(id int) (*User, error) {
 	return &user, err
 }
 
-type userNewPayloadWrapper struct {
-	User *userNewPayload `json:"user"`
-}
-
-type userNewPayload struct {
-	Email                       string `json:"email"`
-	FullName                    string `json:"full_name"`
-	Role                        string `json:"role"`
-	Restricted                  bool   `json:"restricted"`
-	SharedDimensionFilterSetIDs []int  `json:"shared_dimension_filter_set_ids"`
-	DefaultDimensionFilterID    int    `json:"default_dimension_filer_set_id"`
-}
-
-// NewUser - Create a user
-func (e *UsersEndpoint) NewUser(user *User) error {
-	userPayload := new(userNewPayload)
-	jsonUser, _ := json.Marshal(user)
-	json.Unmarshal(jsonUser, userPayload)
-
-	userPayloadWrapper := &userNewPayloadWrapper{
-		User: userPayload,
-	}
-	return e.post(e, "", userPayloadWrapper, nil)
-}
-
 type userUpdatePayloadWrapper struct {
 	User *userUpdatePayload `json:"user"`
 }
 
 type userUpdatePayload struct {
-	FullName                    string `json:"full_name"`
-	Role                        string `json:"role"`
-	Restricted                  bool   `json:"restricted"`
-	SharedDimensionFilterSetIDs []int  `json:"shared_dimension_filter_set_ids"`
-	DefaultDimensionFilterID    int    `json:"default_dimension_filer_set_id"`
+	FullName                           string `json:"full_name"`
+	NewSharedDimensionFilterSetIDs     []int  `json:"new_shared_dimension_filter_set_ids"`
+	UnshareExistingDimensionFilterSets bool   `json:"unshare_existing_dimension_filter_sets"`
+	DefaultDimensionFilterSetID        int    `json:"default_dimension_filter_set_id"`
 }
 
 // UpdateUser - Update a user
@@ -89,9 +63,4 @@ func (e *UsersEndpoint) UpdateUser(user *User) error {
 		User: userPayload,
 	}
 	return e.put(e, strconv.Itoa(user.ID), userPayloadWrapper)
-}
-
-// DeleteUser - Delete a user
-func (e *UsersEndpoint) DeleteUser(id int) error {
-	return e.delete(e, strconv.Itoa(id))
 }

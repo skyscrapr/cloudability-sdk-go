@@ -41,18 +41,28 @@ type businessMappingPayload struct {
 	UpdatedAt    string
 }
 
+// BusinessMappingsResult - Cloudabiity BusinessMappings
+type BusinessMappingsResult struct {
+	Result []BusinessMapping `json:"result"`
+}
+
 // GetBusinessMappings - Get a list of all existing business mappings.
 func (e *BusinessMappingsEndpoint) GetBusinessMappings() ([]BusinessMapping, error) {
-	var businessMappings []BusinessMapping
+	var businessMappings BusinessMappingsResult
 	err := e.get(e, "", &businessMappings)
-	return businessMappings, err
+	return businessMappings.Result, err
+}
+
+// BusinessMappingResult - Cloudabiity BusinessMapping
+type BusinessMappingResult struct {
+	Result BusinessMapping `json:"result"`
 }
 
 // GetBusinessMapping - Get an existing business mapping by index.
 func (e *BusinessMappingsEndpoint) GetBusinessMapping(index int) (*BusinessMapping, error) {
-	var businessMapping BusinessMapping
+	var businessMapping BusinessMappingResult
 	err := e.get(e, strconv.Itoa(index), &businessMapping)
-	return &businessMapping, err
+	return &businessMapping.Result, err
 }
 
 // NewBusinessMapping - Create a new business mapping.
@@ -60,9 +70,9 @@ func (e *BusinessMappingsEndpoint) NewBusinessMapping(businessMapping *BusinessM
 	businessMappingPayload := new(businessMappingPayload)
 	jsonBusinessMapping, _ := json.Marshal(businessMapping)
 	json.Unmarshal(jsonBusinessMapping, businessMappingPayload)
-	var newBusinessMapping BusinessMapping
+	var newBusinessMapping BusinessMappingResult
 	err := e.post(e, "", businessMappingPayload, &newBusinessMapping)
-	return &newBusinessMapping, err
+	return &newBusinessMapping.Result, err
 }
 
 // UpdateBusinessMapping - Update an existing business mapping using given index.

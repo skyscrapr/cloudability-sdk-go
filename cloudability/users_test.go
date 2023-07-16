@@ -10,7 +10,7 @@ import (
 func TestNewUsersEndpoint(t *testing.T) {
 	testClient := NewClient("testapikey")
 	e := testClient.Users()
-	if e.BaseURL.String() != apiV1URL {
+	if e.BaseURL.String() != apiV3URL {
 		t.Errorf("UsersEndpoint BaseURL mismatch. Got %s. Expected %s", e.BaseURL.String(), apiV1URL)
 	}
 	if e.EndpointPath != usersEndpoint {
@@ -18,15 +18,20 @@ func TestNewUsersEndpoint(t *testing.T) {
 	}
 }
 
+// [{"id":91271,"frontdoor_user_id":"53f0db8c-d038-4525-9472-7e3b692ab9ff","frontdoor_login":"hwallez@apptio.com","email":"hwallez@apptio.com","full_name":"Harry Wallez","default_dimension_filter_set_id":0,"shared_dimension_filter_set_ids":[225582,354716,354717,354718,354719,354720,354721,373379,373380,373381]},{"id":91294,"frontdoor_user_id":"9e937cc8-3ea2-4e91-8c10-a07feb9812a3","frontdoor_login":"jplatt@apptio.com","email":"jplatt@apptio.com","full_name":"NULL","default_dimension_filter_set_id":0,"shared_dimension_filter_set_ids":[225582,354716,354717,354718,354719,354720,354721,373379,373380,373381]},{"id":91713,"frontdoor_user_id":"f5a6cb08-3e1d-44aa-b702-4925756e88c8","frontdoor_login":"abhjaw@amazon.com","email":"abhjaw@amazon.com","full_na
 func TestGetUsers(t *testing.T) {
 	expectedUsers := []User{
 		{
-			ID:       1,
-			Email:    "1@test",
-			FullName: "1 Test",
+			ID:                          1,
+			FrontdoorUserId:             "test",
+			FrontdoorLogin:              "1@test",
+			Email:                       "1@test",
+			FullName:                    "1 Test",
+			DefaultDimensionFilterSetID: 0,
+			SharedDimensionFilterSetIDs: []int{225582},
 		},
 	}
-	testServer := testV1API(t, "GET", "/users", &expectedUsers)
+	testServer := testV3API(t, "GET", "/users", expectedUsers)
 	defer testServer.Close()
 	testClient := testClient(t, testServer)
 	e := testClient.Users()
@@ -50,7 +55,7 @@ func TestGetUser(t *testing.T) {
 		Email:    "1@test",
 		FullName: "1 Test",
 	}
-	testServer := testV1API(t, "GET", "/users/1", &expectedUser)
+	testServer := testV3API(t, "GET", "/users/1", &expectedUser)
 	defer testServer.Close()
 	testClient := testClient(t, testServer)
 	e := testClient.Users()
@@ -68,56 +73,20 @@ func TestGetUser(t *testing.T) {
 	}
 }
 
-func TestNewUser(t *testing.T) {
-	testServer := testV1API(t, "POST", "/users", nil)
-	defer testServer.Close()
-	user := &User{
-		Email:      "test.name@test.com.test",
-		FullName:   "Test Name",
-		Role:       "test_role",
-		Restricted: false,
-		// TODO: Fix this
-		// SharedDimensionFilterSetIds: [0,1],
-		DefaultDimensionFilterID: 1,
-	}
-	testClient := NewClient("testapikey")
-	e := testClient.Users()
-	e.BaseURL, _ = url.Parse(testServer.URL)
-	err := e.NewUser(user)
-	if err != nil {
-		t.Fail()
-	}
-}
-
 func TestUpdateUser(t *testing.T) {
-	testServer := testV1API(t, "PUT", "/users/1", nil)
+	testServer := testV3API(t, "PUT", "/users/1", nil)
 	defer testServer.Close()
 	user := &User{
-		ID:         1,
-		Email:      "test.name@test.com.test",
-		FullName:   "Test Name",
-		Role:       "test_role",
-		Restricted: false,
-		// TODO: Fix this
-		// SharedDimensionFilterSetIds: [0,1],
-		DefaultDimensionFilterID: 1,
+		ID:                          1,
+		Email:                       "test.name@test.com.test",
+		FullName:                    "Test Name",
+		SharedDimensionFilterSetIDs: []int{0, 1},
+		DefaultDimensionFilterSetID: 0,
 	}
 	testClient := NewClient("testapikey")
 	e := testClient.Users()
 	e.BaseURL, _ = url.Parse(testServer.URL)
 	err := e.UpdateUser(user)
-	if err != nil {
-		t.Fail()
-	}
-}
-
-func TestDeleteUser(t *testing.T) {
-	testServer := testV1API(t, "DELETE", "/users/1", nil)
-	defer testServer.Close()
-	testClient := NewClient("testapikey")
-	e := testClient.Users()
-	e.BaseURL, _ = url.Parse(testServer.URL)
-	err := e.DeleteUser(1)
 	if err != nil {
 		t.Fail()
 	}

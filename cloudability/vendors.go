@@ -51,32 +51,47 @@ type Account struct {
 	CreatedAt         string         `json:"createdAt"`
 }
 
+// VendorsResult - Cloudabiity Vendors
+type VendorsResult struct {
+	Result []Vendor `json:"result"`
+}
+
 // GetVendors - get all vendors
 func (e VendorsEndpoint) GetVendors() ([]Vendor, error) {
-	var vendors []Vendor
+	var vendors VendorsResult
 	err := e.get(e, "", &vendors)
-	return vendors, err
+	return vendors.Result, err
+}
+
+// AccountsResult - Cloudabiity Accounts
+type AccountsResult struct {
+	Result []Account `json:"result"`
 }
 
 // GetAccounts - get all accounts for a given vendor
 func (e VendorsEndpoint) GetAccounts(vendor string) ([]Account, error) {
-	var accounts []Account
+	var accounts AccountsResult
 	err := e.get(e, fmt.Sprintf("%s/accounts/", vendor), &accounts)
-	return accounts, err
+	return accounts.Result, err
+}
+
+// AccountResult - Cloudabiity Account
+type AccountResult struct {
+	Result Account `json:"result"`
 }
 
 // GetAccount - get a single account for a given vendor
 func (e VendorsEndpoint) GetAccount(vendor string, accountID string) (*Account, error) {
-	var account Account
+	var account AccountResult
 	err := e.get(e, fmt.Sprintf("%s/accounts/%s?viewId=0", vendor, accountID), &account)
-	return &account, err
+	return &account.Result, err
 }
 
 // VerifyAccount - verify account
 func (e VendorsEndpoint) VerifyAccount(vendor string, accountID string) (*Account, error) {
-	var account Account
+	var account AccountResult
 	err := e.post(e, fmt.Sprintf("%s/accounts/%s/verification?viewId=0", vendor, accountID), nil, &account)
-	return &account, err
+	return &account.Result, err
 }
 
 // CostAndUsageReport - cost and usage report
@@ -100,16 +115,16 @@ type NewMasterAccountParams struct {
 
 // NewMasterAccount - Create a new master account
 func (e VendorsEndpoint) NewMasterAccount(vendorKey string, newAccountParams *NewMasterAccountParams) (*Account, error) {
-	var account Account
+	var account AccountResult
 	err := e.post(e, fmt.Sprintf("%s/accounts", vendorKey), newAccountParams, &account)
-	return &account, err
+	return &account.Result, err
 }
 
 // NewLinkedAccount - Create a new linked account
 func (e VendorsEndpoint) NewLinkedAccount(vendorKey string, newAccountParams *NewLinkedAccountParams) (*Account, error) {
-	var account Account
+	var account AccountResult
 	err := e.post(e, fmt.Sprintf("%s/accounts", vendorKey), newAccountParams, &account)
-	return &account, err
+	return &account.Result, err
 }
 
 // DeleteAccount - Delete an account

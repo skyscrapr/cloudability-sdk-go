@@ -29,9 +29,14 @@ type Recommendation struct {
 	Action string `json:"action"`
 }
 
+// ResourceResult - Cloudabiity Resource
+type ResourceResult struct {
+	Result Resource `json:"result"`
+}
+
 // GetResource return a Rightsizing Resource
 func (e RightsizingEndpoint) GetResource(vendor string, service string, resourceID string) (*Resource, error) {
-	var resource Resource
+	var resource ResourceResult
 	err := e.get(e, fmt.Sprintf("%s/recommendations/%s?filters=resourceIdentifier==%s", vendor, service, resourceID), &resource)
-	return &resource, err
+	return &resource.Result, err
 }
