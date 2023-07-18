@@ -102,8 +102,8 @@ func (e *endpoint) buildURL(endpointPath string) *url.URL {
 	return e.BaseURL.ResolveReference(u)
 }
 
-type v3ResultTemplate struct {
-	Result interface{} `json:"result"`
+type v3Result[T any] struct {
+	Result T `json:"result"`
 }
 
 func (c *Client) get(e endpointI, endpoint string, result interface{}) error {
@@ -147,30 +147,8 @@ func (c *Client) doRequest(req *http.Request, result interface{}) (*http.Respons
 		}
 		return nil, errors.New(string(bodyBytes))
 	}
-	return resp, nil
-}
-
-func (e *v1Endpoint) doRequest(req *http.Request, result interface{}) (*http.Response, error) {
-	resp, err := e.Client.doRequest(req, result)
 	if result != nil {
 		err = json.NewDecoder(resp.Body).Decode(result)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-	return resp, err
-}
-
-func (e *v3Endpoint) doRequest(req *http.Request, result interface{}) (*http.Response, error) {
-	resp, err := e.Client.doRequest(req, result)
-	if err != nil {
-		return resp, err
-	}
-	if result != nil {
-		resultTemplate := &v3ResultTemplate{
-			Result: &result,
-		}
-		err = json.NewDecoder(resp.Body).Decode(resultTemplate)
 		if err != nil {
 			log.Fatal(err)
 		}

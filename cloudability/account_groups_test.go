@@ -44,7 +44,7 @@ func TestGetAccountGroups(t *testing.T) {
 			AccountGroupEntryValues: []string{},
 		},
 	}
-	testServer := testV1API(t, "GET", "/account_groups", expectedAccountGroups)
+	testServer := testAPI(t, "GET", "/account_groups", expectedAccountGroups)
 	defer testServer.Close()
 	testClient := testClient(t, testServer)
 	e := testClient.AccountGroups()
@@ -68,7 +68,7 @@ func TestGetAccountGroup(t *testing.T) {
 			"orange2",
 		},
 	}
-	testServer := testV1API(t, "GET", "/account_groups/2", &expectedAccountGroup)
+	testServer := testAPI(t, "GET", "/account_groups/2", &expectedAccountGroup)
 	defer testServer.Close()
 	testClient := testClient(t, testServer)
 	e := testClient.AccountGroups()
@@ -83,7 +83,7 @@ func TestGetAccountGroup(t *testing.T) {
 }
 
 func TestNewAccountGroup(t *testing.T) {
-	testServer := testV1API(t, "POST", "/account_groups", nil)
+	testServer := testAPI(t, "POST", "/account_groups", nil)
 	defer testServer.Close()
 	accountGroup := &AccountGroup{
 		Name:     "purple",
@@ -99,7 +99,7 @@ func TestNewAccountGroup(t *testing.T) {
 }
 
 func TestUpdateAccountGroup(t *testing.T) {
-	testServer := testV1API(t, "PUT", "/account_groups/1", nil)
+	testServer := testAPI(t, "PUT", "/account_groups/1", nil)
 	defer testServer.Close()
 	accountGroup := &AccountGroup{
 		ID:   1,
@@ -115,7 +115,7 @@ func TestUpdateAccountGroup(t *testing.T) {
 }
 
 func TestDeleteAccountGroup(t *testing.T) {
-	testServer := testV1API(t, "DELETE", "/account_groups/1", nil)
+	testServer := testAPI(t, "DELETE", "/account_groups/1", nil)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.AccountGroups()

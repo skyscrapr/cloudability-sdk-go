@@ -31,7 +31,7 @@ type Recommendation struct {
 
 // GetResource return a Rightsizing Resource
 func (e RightsizingEndpoint) GetResource(vendor string, service string, resourceID string) (*Resource, error) {
-	var resource Resource
-	err := e.get(e, fmt.Sprintf("%s/recommendations/%s?filters=resourceIdentifier==%s", vendor, service, resourceID), &resource)
-	return &resource, err
+	var result v3Result[*Resource]
+	err := e.get(e, fmt.Sprintf("%s/recommendations/%s?filters=resourceIdentifier==%s", vendor, service, resourceID), &result)
+	return result.Result, err
 }

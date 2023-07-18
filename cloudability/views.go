@@ -35,16 +35,16 @@ type View struct {
 
 // GetViews - returns all views
 func (e ViewsEndpoint) GetViews() ([]View, error) {
-	var views []View
-	err := e.get(e, "", &views)
-	return views, err
+	var result v3Result[[]View]
+	err := e.get(e, "", &result)
+	return result.Result, err
 }
 
 // GetView - return a single view
 func (e ViewsEndpoint) GetView(id string) (*View, error) {
-	var view View
-	err := e.get(e, id, &view)
-	return &view, err
+	var result v3Result[*View]
+	err := e.get(e, id, &result)
+	return result.Result, err
 }
 
 type viewPayload struct {
@@ -59,9 +59,9 @@ func (e *ViewsEndpoint) NewView(view *View) (*View, error) {
 	viewPayload := new(viewPayload)
 	jsonView, _ := json.Marshal(view)
 	json.Unmarshal(jsonView, viewPayload)
-	var newView View
-	err := e.post(e, "", viewPayload, &newView)
-	return &newView, err
+	var result v3Result[*View]
+	err := e.post(e, "", viewPayload, &result)
+	return result.Result, err
 }
 
 // UpdateView - update a view
