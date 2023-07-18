@@ -144,23 +144,35 @@ func TestMultipleBusinessMapping(t *testing.T) {
 	client := NewClient(apikey)
 	newbm1, err := client.BusinessMappings().NewBusinessMapping(&bm1)
 	if err != nil {
-		t.Fail()
+		t.Fatalf("Error creating bm1: %s", err)
 	}
 	newbm2, err := client.BusinessMappings().NewBusinessMapping(&bm2)
 	if err != nil {
-		t.Fail()
+		t.Fatalf("Error creating bm2: %s", err)
 	}
 	newbm3, err := client.BusinessMappings().NewBusinessMapping(&bm3)
 	if err != nil {
-		t.Fail()
+		t.Fatalf("Error creating bm3: %s", err)
 	}
 	if newbm1.Name != "bm1" {
 		t.Fatalf(`New Business Mapping. Got: %q, Want: %q`, newbm1.Name, "bm1")
 	}
 	if newbm2.Name != "bm2" {
-		t.Fatalf(`New Business Mapping. Got: %q, Want: %q`, newbm2.Name, "bm1")
+		t.Fatalf(`New Business Mapping. Got: %q, Want: %q`, newbm2.Name, "bm2")
 	}
 	if newbm3.Name != "bm3" {
-		t.Fatalf(`New Business Mapping. Got: %q, Want: %q`, newbm3.Name, "bm1")
+		t.Fatalf(`New Business Mapping. Got: %q, Want: %q`, newbm3.Name, "bm3")
+	}
+	err = client.BusinessMappings().DeleteBusinessMapping(newbm1.Index)
+	if err != nil {
+		t.Fatalf("Error deleting bm1: %s", err)
+	}
+	err = client.BusinessMappings().DeleteBusinessMapping(newbm2.Index)
+	if err != nil {
+		t.Fatalf("Error deleting bm1: %s", err)
+	}
+	err = client.BusinessMappings().DeleteBusinessMapping(newbm3.Index)
+	if err != nil {
+		t.Fatalf("Error deleting bm1: %s", err)
 	}
 }

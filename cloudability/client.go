@@ -106,10 +106,6 @@ type v3Result[T any] struct {
 	Result T `json:"result"`
 }
 
-type v3ResultTemplate struct {
-	Result interface{} `json:"result"`
-}
-
 func (c *Client) get(e endpointI, endpoint string, result interface{}) error {
 	return c.do(e, "GET", endpoint, nil, result)
 }
