@@ -31,7 +31,7 @@ func TestGetUsers(t *testing.T) {
 			SharedDimensionFilterSetIDs: []int{225582},
 		},
 	}
-	testServer := testV3API(t, "GET", "/users", expectedUsers)
+	testServer := testAPI(t, "GET", "/users", expectedUsers)
 	defer testServer.Close()
 	testClient := testClient(t, testServer)
 	e := testClient.Users()
@@ -55,7 +55,7 @@ func TestGetUser(t *testing.T) {
 		Email:    "1@test",
 		FullName: "1 Test",
 	}
-	testServer := testV3API(t, "GET", "/users/1", &expectedUser)
+	testServer := testAPI(t, "GET", "/users/1", expectedUser)
 	defer testServer.Close()
 	testClient := testClient(t, testServer)
 	e := testClient.Users()
@@ -66,15 +66,11 @@ func TestGetUser(t *testing.T) {
 	if user == nil {
 		t.Fail()
 	}
-	if !reflect.DeepEqual(user, expectedUser) {
-		suser, _ := json.MarshalIndent(user, "", "\t")
-		sexpectedUser, _ := json.MarshalIndent(expectedUser, "", "\t")
-		t.Errorf("Expected user '%s', got '%s'", sexpectedUser, suser)
-	}
+	testCheckStructEqual(t, user, expectedUser)
 }
 
 func TestUpdateUser(t *testing.T) {
-	testServer := testV3API(t, "PUT", "/users/1", nil)
+	testServer := testAPI(t, "PUT", "/users/1", nil)
 	defer testServer.Close()
 	user := &User{
 		ID:                          1,

@@ -102,6 +102,10 @@ func (e *endpoint) buildURL(endpointPath string) *url.URL {
 	return e.BaseURL.ResolveReference(u)
 }
 
+type v3Result[T any] struct {
+	Result T `json:"result"`
+}
+
 type v3ResultTemplate struct {
 	Result interface{} `json:"result"`
 }

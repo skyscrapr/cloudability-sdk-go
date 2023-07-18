@@ -33,28 +33,18 @@ type View struct {
 	Filters                []*ViewFilter `json:"filters"`
 }
 
-// ViewResult - Cloudabiity View
-type ViewResult struct {
-	Result View `json:"result"`
-}
-
-// ViewsResult - Cloudabiity Views
-type ViewsResult struct {
-	Result []View `json:"result"`
-}
-
 // GetViews - returns all views
 func (e ViewsEndpoint) GetViews() ([]View, error) {
-	var views ViewsResult
-	err := e.get(e, "", &views)
-	return views.Result, err
+	var result v3Result[[]View]
+	err := e.get(e, "", &result)
+	return result.Result, err
 }
 
 // GetView - return a single view
 func (e ViewsEndpoint) GetView(id string) (*View, error) {
-	var view ViewResult
-	err := e.get(e, id, &view)
-	return &view.Result, err
+	var result v3Result[*View]
+	err := e.get(e, id, &result)
+	return result.Result, err
 }
 
 type viewPayload struct {
@@ -69,9 +59,9 @@ func (e *ViewsEndpoint) NewView(view *View) (*View, error) {
 	viewPayload := new(viewPayload)
 	jsonView, _ := json.Marshal(view)
 	json.Unmarshal(jsonView, viewPayload)
-	var newView ViewResult
-	err := e.post(e, "", viewPayload, &newView)
-	return &newView.Result, err
+	var result v3Result[*View]
+	err := e.post(e, "", viewPayload, &result)
+	return result.Result, err
 }
 
 // UpdateView - update a view

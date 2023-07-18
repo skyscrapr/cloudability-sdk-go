@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func testV1API(t *testing.T, method string, path string, body interface{}) *httptest.Server {
+func testAPI(t *testing.T, method string, path string, body interface{}) *httptest.Server {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		if req.Method != method {
 			t.Errorf("Expected request method ‘%s’, got ‘%s’", method, req.Method)
@@ -28,29 +28,6 @@ func testV1API(t *testing.T, method string, path string, body interface{}) *http
 		} else {
 			// TODO: Fix this. I don't think it's right
 			rw.Write([]byte(`{}`))
-		}
-	}))
-	return server
-}
-
-func testV3API(t *testing.T, method string, path string, body interface{}) *httptest.Server {
-	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		if req.Method != method {
-			t.Errorf("Expected request method ‘%s’, got ‘%s’", method, req.Method)
-		}
-		if req.URL.Path != path {
-			t.Errorf("Expected request to ‘%s’, got ‘%s’", path, req.URL.Path)
-		}
-		if body != nil {
-			result := v3ResultTemplate{
-				Result: body,
-			}
-			buf := new(bytes.Buffer)
-			err := json.NewEncoder(buf).Encode(result)
-			if err != nil {
-				t.Errorf("Error converting body into JSON: %s", err)
-			}
-			rw.Write(buf.Bytes())
 		}
 	}))
 	return server
