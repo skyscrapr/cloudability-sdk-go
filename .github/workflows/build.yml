@@ -6,7 +6,6 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-
     - name: Set up Go 1.18
       uses: actions/setup-go@v1
       with:
@@ -26,6 +25,8 @@ jobs:
 
     - name: Test
       working-directory: ./cloudability
+      env:
+        CLOUDABILITY_APIKEY: ${{ secrets.CLOUDABILITY_APIKEY }}
       run: go test ./...
 
     # - name: Build
