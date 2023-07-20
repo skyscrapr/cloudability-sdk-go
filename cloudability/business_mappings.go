@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-const businessMappingsEndpoint = "/business-mappings/"
+const businessMappingsEndpoint = "/"
 
 // BusinessMappingsEndpoint - Cloudability BusinessMappingsEndpoint
 type BusinessMappingsEndpoint struct {
@@ -25,56 +25,98 @@ type BusinessMappingStatement struct {
 
 // BusinessMapping - Cloudability BusinessMapping
 type BusinessMapping struct {
-	Index        int                         `json:"index"`
-	Kind         string                      `json:"kind"`
-	Name         string                      `json:"name"`
-	DefaultValue string                      `json:"defaultValue"`
-	Statements   []*BusinessMappingStatement `json:"statements"`
-	UpdatedAt    string
+	Index                  int                         `json:"index"`
+	Kind                   string                      `json:"kind"`
+	Name                   string                      `json:"name"`
+	DefaultValue           string                      `json:"defaultValue,omitempty"`
+	DefaultValueExpression string                      `json:"defaultValueExpression,omitempty"`
+	Statements             []*BusinessMappingStatement `json:"statements"`
+	UpdatedAt              string
+	NumberFormat           string `json:"numberFormat"`
+	PreMatchExpression     string `json:"preMatchExpression,omitempty"`
 }
 
 type businessMappingPayload struct {
-	Kind         string                      `json:"kind"`
-	Name         string                      `json:"name"`
-	DefaultValue string                      `json:"defaultValue"`
-	Statements   []*BusinessMappingStatement `json:"statements"`
-	UpdatedAt    string
+	Kind                   string                      `json:"kind"`
+	Name                   string                      `json:"name"`
+	DefaultValue           string                      `json:"defaultValue,omitempty"`
+	DefaultValueExpression string                      `json:"defaultValueExpression,omitempty"`
+	Statements             []*BusinessMappingStatement `json:"statements"`
+	UpdatedAt              string
+	NumberFormat           string `json:"numberFormat"`
+	PreMatchExpression     string `json:"preMatchExpression,omitempty"`
 }
 
-// GetBusinessMappings - Get a list of all existing business mappings.
-func (e *BusinessMappingsEndpoint) GetBusinessMappings() ([]BusinessMapping, error) {
+// GetBusinessDimensions - Get a list of all existing business dimensions.
+func (e *BusinessMappingsEndpoint) GetBusinessDimensions() ([]BusinessMapping, error) {
 	var result v3Result[[]BusinessMapping]
-	err := e.get(e, "", &result)
+	err := e.get(e, "business-mappings/dimensions", &result)
 	return result.Result, err
 }
 
-// GetBusinessMapping - Get an existing business mapping by index.
-func (e *BusinessMappingsEndpoint) GetBusinessMapping(index int) (*BusinessMapping, error) {
+// GetBusinessDimension - Get an existing business dimension by index.
+func (e *BusinessMappingsEndpoint) GetBusinessDimension(index int) (*BusinessMapping, error) {
 	var result v3Result[*BusinessMapping]
-	err := e.get(e, strconv.Itoa(index), &result)
+	err := e.get(e, "business-mappings/"+strconv.Itoa(index), &result)
 	return result.Result, err
 }
 
-// NewBusinessMapping - Create a new business mapping.
-func (e *BusinessMappingsEndpoint) NewBusinessMapping(businessMapping *BusinessMapping) (*BusinessMapping, error) {
-	businessMappingPayload := new(businessMappingPayload)
-	jsonBusinessMapping, _ := json.Marshal(businessMapping)
-	json.Unmarshal(jsonBusinessMapping, businessMappingPayload)
+// NewBusinessDimension - Create a new business dimension.
+func (e *BusinessMappingsEndpoint) NewBusinessDimension(dimension *BusinessMapping) (*BusinessMapping, error) {
+	payload := new(businessMappingPayload)
+	jsonBusinessMapping, _ := json.Marshal(dimension)
+	json.Unmarshal(jsonBusinessMapping, payload)
 	var result v3Result[*BusinessMapping]
-	err := e.post(e, "", businessMappingPayload, &result)
+	err := e.post(e, "business-mappings/", payload, &result)
 	return result.Result, err
 }
 
-// UpdateBusinessMapping - Update an existing business mapping using given index.
-func (e *BusinessMappingsEndpoint) UpdateBusinessMapping(businessMapping *BusinessMapping) error {
-	businessMappingPayload := new(businessMappingPayload)
-	jsonBusinessMapping, _ := json.Marshal(businessMapping)
-	json.Unmarshal(jsonBusinessMapping, businessMappingPayload)
-	return e.put(e, strconv.Itoa(businessMapping.Index), businessMappingPayload)
+// UpdateBusinessDimension - Update an existing business dimension using given index.
+func (e *BusinessMappingsEndpoint) UpdateBusinessDimension(dimension *BusinessMapping) error {
+	payload := new(businessMappingPayload)
+	jsonBusinessMapping, _ := json.Marshal(dimension)
+	json.Unmarshal(jsonBusinessMapping, payload)
+	return e.put(e, "business-mappings/"+strconv.Itoa(dimension.Index), payload)
 }
 
-// DeleteBusinessMapping - Delete an existing business mapping by index.
-func (e *BusinessMappingsEndpoint) DeleteBusinessMapping(index int) error {
-	err := e.delete(e, strconv.Itoa(index))
-	return err
+// DeleteBusinessDimension - Delete an existing business dimension by index.
+func (e *BusinessMappingsEndpoint) DeleteBusinessDimension(index int) error {
+	return e.delete(e, "business-mappings/"+strconv.Itoa(index))
+}
+
+// GetBusinessMetrics - Get a list of all existing business metrics.
+func (e *BusinessMappingsEndpoint) GetBusinessMetrics() ([]BusinessMapping, error) {
+	var result v3Result[[]BusinessMapping]
+	err := e.get(e, "internal/business-mappings/metrics", &result)
+	return result.Result, err
+}
+
+// GetBusinessDimension - Get an existing business dimension by index.
+func (e *BusinessMappingsEndpoint) GetBusinessMetric(index int) (*BusinessMapping, error) {
+	var result v3Result[*BusinessMapping]
+	err := e.get(e, "internal/business-mappings/"+strconv.Itoa(index)+"/metrics", &result)
+	return result.Result, err
+}
+
+// NewBusinessMetric - Create a new business metric.
+func (e *BusinessMappingsEndpoint) NewBusinessMetric(metric *BusinessMapping) (*BusinessMapping, error) {
+	payload := new(businessMappingPayload)
+	jsonBusinessMapping, _ := json.Marshal(metric)
+	json.Unmarshal(jsonBusinessMapping, payload)
+	var result v3Result[*BusinessMapping]
+	err := e.post(e, "internal/business-mappings/metrics", payload, &result)
+	return result.Result, err
+}
+
+// UpdateBusinessMetric - Update an existing business metric using given index.
+func (e *BusinessMappingsEndpoint) UpdateBusinessMetric(metric *BusinessMapping) error {
+	payload := new(businessMappingPayload)
+	jsonBusinessMapping, _ := json.Marshal(metric)
+	json.Unmarshal(jsonBusinessMapping, payload)
+	return e.put(e, "internal/business-mappings/"+strconv.Itoa(metric.Index)+"/metrics", payload)
+}
+
+// DeleteBusinessMetric - Delete an existing business metric by index.
+func (e *BusinessMappingsEndpoint) DeleteBusinessMetric(index int) error {
+	return e.delete(e, "internal/business-mappings/"+strconv.Itoa(index)+"/metrics")
 }
