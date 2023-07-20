@@ -31,7 +31,7 @@ func TestGetBusinessDimensions(t *testing.T) {
 }
 
 func TestGetBusinessDimension(t *testing.T) {
-	testServer := testAPI(t, "GET", "/business-mappings/dimensions/1", nil)
+	testServer := testAPI(t, "GET", "/business-mappings/1", nil)
 	defer testServer.Close()
 
 	testClient := NewClient("testapikey")
@@ -50,7 +50,7 @@ func TestNewBusinessDimension(t *testing.T) {
 		DefaultValue: "test-default-value",
 		// Statements: [],
 	}
-	testServer := testAPI(t, "POST", "/business-mappings/dimensions", dimension)
+	testServer := testAPI(t, "POST", "/business-mappings", dimension)
 	defer testServer.Close()
 
 	testClient := NewClient("testapikey")
@@ -70,7 +70,7 @@ func TestUpdateBusinessDimension(t *testing.T) {
 		DefaultValue: "test-default-value",
 		// Statements: [],
 	}
-	testServer := testAPI(t, "PUT", "/business-mappings/dimensions/1", dimension)
+	testServer := testAPI(t, "PUT", "/business-mappings/1", dimension)
 	defer testServer.Close()
 
 	testClient := NewClient("testapikey")
@@ -83,7 +83,7 @@ func TestUpdateBusinessDimension(t *testing.T) {
 }
 
 func TestDeleteBusinessDimension(t *testing.T) {
-	testServer := testAPI(t, "DELETE", "/business-mappings/dimensions/1", nil)
+	testServer := testAPI(t, "DELETE", "/business-mappings/1", nil)
 	defer testServer.Close()
 	testClient := NewClient("testapikey")
 	e := testClient.BusinessMappings()
