@@ -17,7 +17,7 @@ func TestContainersProvisioningEndpoint(t *testing.T) {
 }
 
 func TestGetCluster(t *testing.T) {
-	testServer := testAPI(t, "GET", "/containers/provisioning/1", nil)
+	testServer := testAPI(t, "GET", "/containers/provisioning", nil)
 	defer testServer.Close()
 
 	testClient := NewClient("testapikey")
@@ -33,7 +33,7 @@ func TestNewContainers(t *testing.T) {
 	cluster := &Cluster{
 		ClusterName:       "test-cluster-name",
 		ClusterVersion:    "test-cluster-version",
-		KubernetesVersion: "test-kubernetes-version",
+		KubernetesVersion: "1.11",
 	}
 	testServer := testAPI(t, "POST", "/containers/provisioning", cluster)
 	defer testServer.Close()
