@@ -35,8 +35,8 @@ type clusterPayload struct {
 	ClusterVersion    string `json:"clusterVersion,omitempty"`
 }
 
-// GetContainer - Get an existing cluster by ID.
-func (e ContainersEndpoint) GetContainer(id string) (*Cluster, error) {
+// GetCluster - Get an existing cluster by ID.
+func (e ContainersEndpoint) GetCluster(id string) (*Cluster, error) {
 	var result clustersResponse
 	err := e.get(e, "provisioning/", &result)
 	if err != nil {
@@ -50,8 +50,8 @@ func (e ContainersEndpoint) GetContainer(id string) (*Cluster, error) {
 	return nil, err
 }
 
-// NewContainers - Create a new Container Provisioning.
-func (e *ContainersEndpoint) NewContainers(clusterProvisioning *Cluster) (*Cluster, error) {
+// NewCluster - Create a new cluster.
+func (e *ContainersEndpoint) NewCluster(clusterProvisioning *Cluster) (*Cluster, error) {
 	clusterProvisioningPayload := new(clusterPayload)
 	jsonCluster, err := json.Marshal(clusterProvisioning)
 	err = json.Unmarshal(jsonCluster, clusterProvisioningPayload)
@@ -60,10 +60,10 @@ func (e *ContainersEndpoint) NewContainers(clusterProvisioning *Cluster) (*Clust
 	return result.Result, err
 }
 
-// UpdateContainers - Update an existing container by ID.
-func (e *ContainersEndpoint) UpdateContainers(clusterProvisioning *Cluster) error {
+// UpdateCluster - Update an existing container by ID.
+func (e *ContainersEndpoint) UpdateCluster(clusterProvisioning *Cluster) error {
 	payload := new(clusterPayload)
-	jsonContainers, _ := json.Marshal(clusterProvisioning)
-	json.Unmarshal(jsonContainers, payload)
+	jsonCluster, _ := json.Marshal(clusterProvisioning)
+	json.Unmarshal(jsonCluster, payload)
 	return e.put(e, "provisioning/"+strconv.Itoa(clusterProvisioning.ID), payload)
 }
