@@ -17,23 +17,23 @@ func TestContainersProvisioningEndpoint(t *testing.T) {
 }
 
 func TestGetCluster(t *testing.T) {
-	testServer := testAPI(t, "GET", "/containers/provisioning/1", nil)
+	testServer := testAPI(t, "GET", "/containers/provisioning", nil)
 	defer testServer.Close()
 
 	testClient := NewClient("testapikey")
 	e := testClient.Containers()
 	e.BaseURL, _ = url.Parse(testServer.URL)
-	_, err := e.GetContainer(1)
+	_, err := e.GetCluster("1")
 	if err != nil {
 		t.Fail()
 	}
 }
 
-func TestNewContainers(t *testing.T) {
+func TestNewCluster(t *testing.T) {
 	cluster := &Cluster{
 		ClusterName:       "test-cluster-name",
 		ClusterVersion:    "test-cluster-version",
-		KubernetesVersion: "test-kubernetes-version",
+		KubernetesVersion: "1.11",
 	}
 	testServer := testAPI(t, "POST", "/containers/provisioning", cluster)
 	defer testServer.Close()
@@ -41,13 +41,13 @@ func TestNewContainers(t *testing.T) {
 	testClient := NewClient("testapikey")
 	e := testClient.Containers()
 	e.BaseURL, _ = url.Parse(testServer.URL)
-	_, err := e.NewContainers(cluster)
+	_, err := e.NewCluster(cluster)
 	if err != nil {
 		t.Fail()
 	}
 }
 
-func TestUpdateContainers(t *testing.T) {
+func TestUpdateCluster(t *testing.T) {
 	cluster := &Cluster{
 		ClusterName:       "test-cluster-name",
 		ClusterVersion:    "test-cluster-version",
@@ -59,7 +59,7 @@ func TestUpdateContainers(t *testing.T) {
 	testClient := NewClient("testapikey")
 	e := testClient.Containers()
 	e.BaseURL, _ = url.Parse(testServer.URL)
-	err := e.UpdateContainers(cluster)
+	err := e.UpdateCluster(cluster)
 	if err != nil {
 		t.Fail()
 	}
