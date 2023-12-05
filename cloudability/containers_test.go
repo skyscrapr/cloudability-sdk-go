@@ -29,6 +29,35 @@ func TestGetCluster(t *testing.T) {
 	}
 }
 
+func TestGetClusterConfig(t *testing.T) {
+	mockYAML := `
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloudability
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cloudability
+  namespace: cloudability
+`
+
+	testServer := testAPI(t, "GET", "/containers/provisioning/1/config", mockYAML)
+	defer testServer.Close()
+
+	testClient := NewClient("testapikey")
+	e := testClient.Containers()
+	e.BaseURL, _ = url.Parse(testServer.URL)
+	config, err := e.GetClusterConfig("1")
+	if err != nil {
+		t.Fail()
+	}
+	if config != mockYAML {
+		t.Fail()
+	}
+}
+
 func TestNewCluster(t *testing.T) {
 	cluster := &Cluster{
 		ClusterName:       "test-cluster-name",
