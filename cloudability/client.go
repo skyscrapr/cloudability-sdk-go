@@ -156,6 +156,35 @@ func (c *Client) doRequest(req *http.Request, result interface{}) (*http.Respons
 	return resp, err
 }
 
+func (c *Client) doRaw(e endpointI, method string, path string) (string, error) {
+	u := e.buildURL(path)
+	req, err := e.newRequest(method, u, nil)
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if !(resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated) {
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return "", err
+		}
+		return "", errors.New(string(bodyBytes))
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	return string(body), nil
+}
+
 func (c *Client) newRequest(method string, u *url.URL, body interface{}) (*http.Request, error) {
 	var buf io.ReadWriter
 	if body != nil {
