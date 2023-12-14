@@ -49,6 +49,7 @@ metadata:
 	testClient := NewClient("testapikey")
 	e := testClient.Containers()
 	e.BaseURL, _ = url.Parse(testServer.URL)
+
 	config, err := e.GetClusterConfig("1")
 	if err != nil {
 		t.Fail()

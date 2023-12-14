@@ -1,7 +1,6 @@
 package cloudability
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -18,16 +17,16 @@ func testAPI(t *testing.T, method string, path string, body interface{}) *httpte
 		if req.URL.Path != path {
 			t.Errorf("Expected request to ‘%s’, got ‘%s’", path, req.URL.Path)
 		}
-		if body != nil {
-			buf := new(bytes.Buffer)
-			err := json.NewEncoder(buf).Encode(body)
-			if err != nil {
-				t.Errorf("Error converting body into JSON: %s", err)
+
+		switch b := body.(type) {
+		case string:
+			rw.Header().Set("Content-Type", "text/plain")
+			rw.Write([]byte(b))
+		default:
+			rw.Header().Set("Content-Type", "application/json")
+			if err := json.NewEncoder(rw).Encode(body); err != nil {
+				t.Errorf("Error encoding response: %s", err)
 			}
-			rw.Write(buf.Bytes())
-		} else {
-			// TODO: Fix this. I don't think it's right
-			rw.Write([]byte(`{}`))
 		}
 	}))
 	return server
