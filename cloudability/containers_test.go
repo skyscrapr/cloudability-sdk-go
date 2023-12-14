@@ -1,7 +1,6 @@
 package cloudability
 
 import (
-	"fmt"
 	"net/url"
 	"testing"
 )
@@ -53,8 +52,7 @@ metadata:
 
 	config, err := e.GetClusterConfig("1")
 	if err != nil {
-		fmt.Println(err)
-		t.Errorf("err %v", err)
+		t.Fail()
 	}
 	if config != mockYAML {
 		t.Fail()
