@@ -1,6 +1,7 @@
 package cloudability
 
 import (
+	"fmt"
 	"net/url"
 	"testing"
 )
@@ -49,9 +50,11 @@ metadata:
 	testClient := NewClient("testapikey")
 	e := testClient.Containers()
 	e.BaseURL, _ = url.Parse(testServer.URL)
+
 	config, err := e.GetClusterConfig("1")
 	if err != nil {
-		t.Fail()
+		fmt.Println(err)
+		t.Errorf("err %v", err)
 	}
 	if config != mockYAML {
 		t.Fail()
