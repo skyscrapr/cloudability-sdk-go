@@ -52,12 +52,7 @@ func (e ContainersEndpoint) GetCluster(id string) (*Cluster, error) {
 
 // GetClusterConfig - Get an existing cluster config by ID
 func (e ContainersEndpoint) GetClusterConfig(id string) (string, error) {
-	var result string
-	err := e.get(e, "provisioning/"+id+"/config", &result)
-	if err != nil {
-		return "", err
-	}
-	return result, nil
+	return e.Client.doRaw(e, "GET", "provisioning/"+id+"/config")
 }
 
 // NewCluster - Create a new cluster.
