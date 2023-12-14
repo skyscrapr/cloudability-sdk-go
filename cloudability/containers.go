@@ -59,7 +59,13 @@ func (e ContainersEndpoint) GetClusterConfig(id string) (string, error) {
 func (e *ContainersEndpoint) NewCluster(clusterProvisioning *Cluster) (*Cluster, error) {
 	clusterProvisioningPayload := new(clusterPayload)
 	jsonCluster, err := json.Marshal(clusterProvisioning)
+	if err != nil {
+		return nil, err
+	}
 	err = json.Unmarshal(jsonCluster, clusterProvisioningPayload)
+	if err != nil {
+		return nil, err
+	}
 	var result v3Result[*Cluster]
 	err = e.post(e, "provisioning/", clusterProvisioningPayload, &result)
 	return result.Result, err
